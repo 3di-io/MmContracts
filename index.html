@@ -145,9 +145,10 @@
             width: 100%;
             aspect-ratio: 1 / 1;
             overflow: hidden;
-            background-color: #f0f0f0;
-            mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
+            background-color: var(--bg-color);
+            /* ایجاد فید طوسی از پایین به بالا با درصد 70 */
+            mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
         }
 
         .blog-image { 
