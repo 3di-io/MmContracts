@@ -10,6 +10,8 @@
         :root { --bg-color: #f7f7f9; --text-dark: #111111; --text-muted: #555555; --accent-color: #d93838; --border-color: #e5e5e5; --border-radius: 40px; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Vazirmatn', sans-serif; }
         html { scroll-behavior: smooth; }
+        main[id], section[id] { scroll-margin-top: 90px; }
+        #serviceDetailsBox { scroll-margin-top: 100px; }
         body { background-color: var(--bg-color); color: var(--text-dark); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
         
         /* ================= هدر ================= */
@@ -20,13 +22,18 @@
         .nav-links a { text-decoration: none; color: var(--text-muted); font-size: 0.95rem; font-weight: 500; transition: color 0.3s; }
         .nav-links a:hover, .nav-links a.active { color: var(--text-dark); font-weight: 700; }
         .header-actions { display: flex; align-items: center; }
+        .menu-toggle { display: none; background: transparent; border: 1.5px solid var(--border-color); width: 42px; height: 42px; border-radius: 50%; cursor: pointer; align-items: center; justify-content: center; flex-direction: column; gap: 4px; margin-inline-start: 10px; flex-shrink: 0; }
+        .menu-toggle span { display: block; width: 18px; height: 2px; background: var(--text-dark); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+        .menu-toggle.open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .menu-toggle.open span:nth-child(2) { opacity: 0; }
+        .menu-toggle.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
         .btn-dark { background-color: var(--text-dark); color: white; padding: 12px 28px; border-radius: 50px; text-decoration: none; font-size: 1rem; font-weight: 600; transition: transform 0.3s, background 0.3s; }
         .btn-dark:hover { transform: translateY(-2px); background-color: #333; }
 
         /* ================= بخش اول (Hero) ================= */
-        .hero { height: 100vh; display: flex; align-items: center; justify-content: space-between; padding: 100px 5% 40px; gap: 40px; }
+        .hero { min-height: 100vh; min-height: 100svh; display: flex; align-items: center; justify-content: space-between; padding: 100px 5% 40px; gap: 40px; }
         .hero-text { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 35px; z-index: 5; }
-        .hero-title { font-size: 4.2rem; font-weight: 900; line-height: 1.3; color: var(--text-dark); letter-spacing: -2px; }
+        .hero-title { font-size: 4.2rem; font-weight: 900; line-height: 1.3; color: var(--text-dark); letter-spacing: 0; }
         .hero-title span { color: var(--text-dark); font-weight: 900; }
         .hero-desc { font-size: 1.35rem; color: var(--text-muted); line-height: 2.2; font-weight: 400; }
         .hero-buttons { display: flex; gap: 20px; align-items: center; margin-top: 15px; }
@@ -38,10 +45,19 @@
         .hero-image-container { flex: 1; max-width: 540px; height: 80vh; max-height: 700px; position: relative; border-radius: var(--border-radius); overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.15); background: #e0e0e0; }
         .hero-image { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; }
         
-        /* افکت باکس Hero (دسکتاپ) */
-        .glass-info-box { position: absolute; bottom: 0; left: 0; width: 100%; padding: 70px 35px 35px; display: flex; justify-content: space-between; align-items: flex-end; background: linear-gradient(to top, rgba(20, 20, 20, 0.95) 0%, rgba(20, 20, 20, 0.7) 40%, transparent 100%); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); mask-image: linear-gradient(to bottom, transparent 0%, black 65%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 65%); z-index: 2; }
+        /* افکت فید و محو شدگی از پایین به بالا (دسکتاپ) — شدت را از این متغیر عوض کنید */
+        .hero-image-container { --hero-fade: 0.7; }
+        .hero-image-container::before,
+        .hero-image-container::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 1; }
+        /* لایه بلور تدریجی */
+        .hero-image-container::before { height: 50%; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,0.55) 45%, transparent 100%); -webkit-mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,0.55) 45%, transparent 100%); }
+        /* لایه تیرگی: ۷۰٪ در پایین، محو تا صفر در بالا */
+        .hero-image-container::after { height: 55%; background: linear-gradient(to top, rgba(20,20,20,var(--hero-fade)) 0%, rgba(20,20,20,calc(var(--hero-fade) * 0.6)) 40%, rgba(20,20,20,calc(var(--hero-fade) * 0.2)) 75%, rgba(20,20,20,0) 100%); }
+        /* سافاری (دسکتاپ و iOS): بلور همراه mask لبه تیز می‌سازد؛ پس فقط فید تیرگی ۷۰٪ می‌ماند */
+        @supports (font: -apple-system-body) { .hero-image-container::before { display: none; } }
+        .glass-info-box { position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px 35px 35px; display: flex; justify-content: space-between; align-items: flex-end; z-index: 2; }
         .info-text { display: flex; flex-direction: column; gap: 6px; }
-        .info-name { font-size: 2.6rem; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8), 0 2px 5px rgba(0, 0, 0, 0.6); }
+        .info-name { font-size: 2.6rem; font-weight: 800; color: #ffffff; letter-spacing: 0; text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8), 0 2px 5px rgba(0, 0, 0, 0.6); }
         .info-title { font-size: 1.2rem; font-weight: 500; color: #ffffff; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8); }
         .glass-badge { background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px); border: 1.5px solid rgba(255, 255, 255, 0.4); padding: 12px 28px; border-radius: 50px; color: white; font-size: 1.1rem; font-weight: 500; text-decoration: none; white-space: nowrap; transition: background 0.3s; }
         .glass-badge:hover { background: rgba(255, 255, 255, 0.3); }
@@ -50,6 +66,7 @@
         .features-section { padding: 100px 5%; background-color: #ffffff; border-top-left-radius: 60px; border-top-right-radius: 60px; margin-top: -40px; position: relative; z-index: 10; }
         .section-header { text-align: center; max-width: 700px; margin: 0 auto 50px; }
         .section-title { font-size: 2.8rem; font-weight: 900; color: var(--text-dark); line-height: 1.3; }
+        .section-subtitle { font-size: 0.95rem; font-weight: 700; color: var(--accent-color); margin-bottom: 12px; }
         
         .services-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; max-width: 1000px; margin: 0 auto; }
         .service-card { background: var(--bg-color); border-radius: var(--border-radius); padding: 40px 30px; border: 1.5px solid var(--border-color); transition: all 0.4s ease; display: flex; flex-direction: column; gap: 20px; }
@@ -85,7 +102,7 @@
         .about-image-wrapper { flex: 1; max-width: 450px; height: 600px; border-radius: var(--border-radius); overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.15); width: 100%; background: #e0e0e0; }
         .about-image { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
         .about-content { flex: 1.2; }
-        .about-title { font-size: 2.8rem; font-weight: 900; margin-bottom: 25px; color: var(--text-dark); line-height: 1.3; letter-spacing: -1px; }
+        .about-title { font-size: 2.8rem; font-weight: 900; margin-bottom: 25px; color: var(--text-dark); line-height: 1.3; letter-spacing: 0; }
         .about-desc { font-size: 1.15rem; color: var(--text-muted); line-height: 2; margin-bottom: 40px; }
         .timeline { position: relative; padding-right: 30px; border-right: 2px solid var(--border-color); }
         .timeline-item { position: relative; margin-bottom: 40px; }
@@ -98,7 +115,7 @@
         /* ================= بخش مراحل همکاری ================= */
         .process-section { padding: 100px 5%; background-color: #ffffff; }
         .process-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; position: relative; }
-        .process-grid::before { content: ''; position: absolute; top: 40px; left: 10%; right: 10%; height: 2px; background: dashed var(--border-color); z-index: 0; }
+        .process-grid::before { content: ''; position: absolute; top: 40px; left: 10%; right: 10%; height: 2px; border-top: 2px dashed var(--border-color); z-index: 0; }
         .process-card { background: var(--bg-color); padding: 40px 30px; border-radius: var(--border-radius); text-align: center; position: relative; z-index: 1; border: 1.5px solid var(--border-color); transition: all 0.4s ease; }
         .process-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); background: #ffffff; border-color: #d0d0d0; }
         .step-number { width: 60px; height: 60px; background: var(--text-dark); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 900; margin: 0 auto 20px auto; position: relative; z-index: 2; transition: all 0.4s ease; border: 4px solid #ffffff; }
@@ -110,7 +127,7 @@
         .contact-section { padding: 120px 5%; background-color: var(--bg-color); }
         .contact-container { max-width: 1200px; margin: 0 auto; display: flex; gap: 60px; align-items: center; }
         .contact-info { flex: 1; display: flex; flex-direction: column; gap: 30px; }
-        .contact-title { font-size: 3.2rem; font-weight: 900; line-height: 1.3; color: var(--text-dark); letter-spacing: -1.5px; }
+        .contact-title { font-size: 3.2rem; font-weight: 900; line-height: 1.3; color: var(--text-dark); letter-spacing: 0; }
         .contact-desc { font-size: 1.2rem; color: var(--text-muted); line-height: 2; }
         .contact-features { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
         .feature-item { display: flex; align-items: center; gap: 15px; font-size: 1.05rem; font-weight: 500; color: var(--text-dark); }
@@ -177,7 +194,7 @@
         .final-section { background: var(--text-dark); padding: 100px 5% 40px; border-top-left-radius: 60px; border-top-right-radius: 60px; color: white; margin-top: -40px; position: relative; z-index: 20; overflow: hidden; }
         .final-section::before { content: ''; position: absolute; top: -200px; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(217, 56, 56, 0.15) 0%, transparent 70%); border-radius: 50%; z-index: 0; pointer-events: none; }
         .final-container { max-width: 1000px; margin: 0 auto; position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; }
-        .final-title { font-size: 3.5rem; font-weight: 900; line-height: 1.3; margin-bottom: 25px; letter-spacing: -1.5px; }
+        .final-title { font-size: 3.5rem; font-weight: 900; line-height: 1.3; margin-bottom: 25px; letter-spacing: 0; }
         .final-title span { color: var(--accent-color); }
         .final-desc { font-size: 1.2rem; color: rgba(255, 255, 255, 0.7); line-height: 2; max-width: 600px; margin-bottom: 40px; }
         .final-buttons { display: flex; gap: 20px; margin-bottom: 70px; }
@@ -193,8 +210,9 @@
 
         /* ================= ریسپانسیو ================= */
         @media (max-width: 1200px) { .hero-title { font-size: 3.2rem; } .hero-desc { font-size: 1.2rem; } .hero-image-container { height: 75vh; } .info-name { font-size: 2.2rem; } .section-title { font-size: 2.4rem; } .contact-title { font-size: 2.8rem; } .about-title { font-size: 2.4rem; } .final-title { font-size: 2.8rem; } }
+        @media (max-width: 1240px) { .process-grid::before { display: none; } }
         @media (max-width: 992px) {
-            .hero { flex-direction: column; height: auto; padding-top: 120px; gap: 50px; }
+            .hero { flex-direction: column; height: auto; min-height: 0; padding-top: 120px; gap: 50px; }
             .hero-text { align-items: center; text-align: center; width: 100%; }
             .hero-buttons { justify-content: center; }
             .hero-image-container { width: 100%; max-width: 600px; height: 500px; }
@@ -208,25 +226,24 @@
         }
         @media (max-width: 768px) {
             header { padding: 15px 5%; }
-            .nav-links { display: none; }
+            .menu-toggle { display: flex; }
+            .logo-container { font-size: 1.05rem; gap: 8px; }
+            .logo-img { width: 38px; height: 38px; }
+            .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; flex-direction: column; gap: 0; background: #f7f7f9; padding: 8px 5% 18px; border-top: 1px solid var(--border-color); box-shadow: 0 20px 30px rgba(0,0,0,0.06); }
+            header.menu-open .nav-links { display: flex; }
+            .nav-links a { display: block; padding: 14px 0; font-size: 1.05rem; }
             .hero { padding: 100px 5% 40px; gap: 30px; }
-            .hero-title { font-size: 8.5vw; letter-spacing: -1px; line-height: 1.3; text-align: center; }
+            .hero-title { font-size: 8.5vw; letter-spacing: 0; line-height: 1.3; text-align: center; }
             .hero-desc { font-size: 4.2vw; text-align: center; line-height: 2; padding: 0 5%; }
             .hero-buttons { flex-direction: column; width: 100%; gap: 15px; }
             .btn-primary, .btn-outline { width: 100%; justify-content: center; padding: 16px 30px; }
             .btn-dark { font-size: 0.9rem; padding: 10px 20px; }
             .hero-image-container { width: 100%; max-width: 100%; height: 60vh; min-height: 400px; border-radius: 30px; display: block; }
             
-            /* اصلاح محو شدگی باکس در موبایل */
-            .glass-info-box { 
-                flex-direction: column; 
-                align-items: center; 
-                text-align: center; 
-                gap: 15px; 
-                padding: 60px 20px 25px; 
-                mask-image: linear-gradient(to bottom, transparent 0%, black 40%); 
-                -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 40%); 
-            }
+            /* فید و محو شدگی در موبایل */
+            .hero-image-container::before { height: 55%; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+            .hero-image-container::after { height: 62%; }
+            .glass-info-box { flex-direction: column; align-items: center; text-align: center; gap: 12px; padding: 40px 20px 25px; }
             
             .info-name { font-size: 7vw; }
             .info-title { font-size: 3.8vw; }
@@ -271,7 +288,7 @@
             <img src="assets/mahsa-logo.jpg" alt="لوگوی Mm Contracts" class="logo-img">
             <span>Mm Contracts</span>
         </div>
-        <ul class="nav-links">
+        <ul class="nav-links" id="navLinks">
             <li><a href="#hero">خانه</a></li>
             <li><a href="#services">خدمات</a></li>
             <li><a href="#about">درباره من</a></li>
@@ -281,6 +298,7 @@
         </ul>
         <div class="header-actions">
             <a href="#contact" class="btn-dark">دریافت مشاوره</a>
+            <button type="button" class="menu-toggle" id="menuToggle" aria-label="باز و بسته کردن منو" aria-expanded="false" aria-controls="navLinks"><span></span><span></span><span></span></button>
         </div>
     </header>
 
@@ -315,7 +333,7 @@
                 <div class="service-icon-box">📄</div>
                 <h3 class="service-title">قراردادهای تجاری</h3>
                 <p class="service-desc">تنظیم، بازبینی و مذاکره قراردادهای تجاری مدرن با استانداردهای حقوقی به‌روز، متناسب با نیاز استارتاپ و کسب‌وکار شما.</p>
-                <button class="accordion-toggle-btn" onclick="toggleServiceDetails('s1', this)">
+                <button class="accordion-toggle-btn" aria-expanded="false" aria-controls="s1" onclick="toggleServiceDetails('s1', this)">
                     <span>بیشتر بدانید</span><span class="arrow-icon">▼</span>
                 </button>
             </div>
@@ -324,7 +342,7 @@
                 <div class="service-icon-box">⚖️</div>
                 <h3 class="service-title">مشاوره استارتاپ‌ها</h3>
                 <p class="service-desc">همراهی تخصصی از مرحله ایده تا رشد؛ شامل ثبت شرکت، قرارداد بین بنیان‌گذاران، جذب سرمایه و مسائل حقوقی روزمره.</p>
-                <button class="accordion-toggle-btn" onclick="toggleServiceDetails('s2', this)">
+                <button class="accordion-toggle-btn" aria-expanded="false" aria-controls="s2" onclick="toggleServiceDetails('s2', this)">
                     <span>بیشتر بدانید</span><span class="arrow-icon">▼</span>
                 </button>
             </div>
@@ -333,7 +351,7 @@
                 <div class="service-icon-box">🛡️</div>
                 <h3 class="service-title">مدیریت ریسک حقوقی</h3>
                 <p class="service-desc">شناسایی نقاط خطر و پیشگیری از بحران‌های حقوقی و مالی قبل از وقوع؛ تا با خیال راحت روی رشد بیزنس تمرکز کنید.</p>
-                <button class="accordion-toggle-btn" onclick="toggleServiceDetails('s3', this)">
+                <button class="accordion-toggle-btn" aria-expanded="false" aria-controls="s3" onclick="toggleServiceDetails('s3', this)">
                     <span>بیشتر بدانید</span><span class="arrow-icon">▼</span>
                 </button>
             </div>
@@ -342,7 +360,7 @@
                 <div class="service-icon-box">📝</div>
                 <h3 class="service-title">تصحیح قرارداد</h3>
                 <p class="service-desc">ارسال قراردادهای نگارش شده جهت بررسی و ارائه نظرات کارشناسی توسط متخصصین، رفع ایرادات و افزایش مهارت نگارش قرارداد.</p>
-                <button class="accordion-toggle-btn" onclick="toggleServiceDetails('s4', this)">
+                <button class="accordion-toggle-btn" aria-expanded="false" aria-controls="s4" onclick="toggleServiceDetails('s4', this)">
                     <span>بیشتر بدانید</span><span class="arrow-icon">▼</span>
                 </button>
             </div>
@@ -466,7 +484,7 @@
                         <input type="text" id="name" class="form-input" placeholder="مثلاً: علی رضایی" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="contact">ایمیل یا شماره تماس</label>
+                        <label class="form-label" for="contactInfo">ایمیل یا شماره تماس</label>
                         <input type="text" id="contactInfo" class="form-input" placeholder="برای ارتباط با شما" required>
                     </div>
                     <div class="form-group">
@@ -511,25 +529,26 @@
                 <a href="https://wa.me/989123456789" target="_blank" rel="noopener" class="social-btn" aria-label="واتساپ"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.24 8.23-1.48 0-2.93-.39-4.19-1.15l-.3-.17-3.12.82.83-3.04-.19-.31a8.176 8.176 0 0 1-1.26-4.38c0-4.54 3.7-8.25 8.24-8.25M8.53 7.33c-.16 0-.43.06-.66.31-.22.25-.87.86-.87 2.07 0 1.22.89 2.39 1 2.56.14.17 1.76 2.67 4.25 3.73.59.27 1.05.42 1.41.53.59.19 1.13.16 1.56.1.48-.07 1.46-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.07-.1-.23-.16-.48-.27-.25-.14-1.47-.74-1.69-.82-.23-.08-.37-.12-.56.12-.16.25-.64.81-.78.97-.15.17-.29.19-.53.07-.26-.13-1.06-.39-2-1.23-.74-.66-1.23-1.47-1.38-1.72-.12-.24-.01-.39.11-.5.11-.11.27-.29.37-.44.13-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.11-.56-1.35-.77-1.84-.2-.48-.4-.42-.56-.43-.14 0-.3-.01-.47-.01z"/></svg></a>
             </div>
             <div class="footer-bottom">
-                <div>© ۱۴۰۳ Mm Contracts — تمامی حقوق محفوظ است.</div>
+                <div>© <span id="footerYear">۱۴۰۵</span> Mm Contracts — تمامی حقوق محفوظ است.</div>
             </div>
         </div>
     </section>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://unpkg.com/split-type"></script>
+    <script src="https://unpkg.com/split-type@0.3.4"></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", (event) => {
             const heroTitle = document.getElementById('heroTitle');
-            if(heroTitle) {
+            if (heroTitle && window.gsap && window.SplitType) {
                 const text = new SplitType(heroTitle, { types: 'words' });
                 gsap.from(text.words, {
                     opacity: 0, y: 20, duration: 0.6, stagger: 0.05, ease: "power3.out", delay: 0.2
                 });
             }
 
+            if (!(window.gsap && window.ScrollTrigger)) return;
             gsap.registerPlugin(ScrollTrigger);
             const sections = document.querySelectorAll('.features-section, .about-section, .process-section, .contact-section, .blog-section');
             sections.forEach(section => {
@@ -551,6 +570,7 @@
             allContents.forEach(c => c.classList.remove('active'));
             allBtns.forEach(b => {
                 b.classList.remove('active');
+                b.setAttribute('aria-expanded', 'false');
                 b.querySelector('span:first-child').innerText = 'بیشتر بدانید';
             });
 
@@ -558,29 +578,73 @@
                 detailsBox.classList.add('active');
                 targetContent.classList.add('active');
                 btn.classList.add('active');
+                btn.setAttribute('aria-expanded', 'true');
                 btn.querySelector('span:first-child').innerText = 'بستن توضیحات';
+                // باکس جزئیات زیر همه کارت‌هاست؛ کاربر را به آن می‌بریم
+                detailsBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } else {
                 detailsBox.classList.remove('active');
             }
         }
 
+        // ===== فرم تماس =====
+        // برای دریافت واقعی درخواست‌ها، آدرس سرویس فرم (مثلاً Formspree) را اینجا بگذارید:
+        // const FORM_ENDPOINT = 'https://formspree.io/f/XXXXXXXX';
+        const FORM_ENDPOINT = '';
+
+        function readRequests() {
+            try {
+                const r = JSON.parse(localStorage.getItem('mm_requests'));
+                return Array.isArray(r) ? r : [];
+            } catch (e) { return []; }
+        }
+        function saveRequestLocally(req) {
+            try {
+                const list = readRequests();
+                list.push(req);
+                localStorage.setItem('mm_requests', JSON.stringify(list));
+                return true;
+            } catch (e) { return false; }
+        }
+
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const name = document.getElementById('name').value;
-            const contactInfo = document.getElementById('contactInfo').value;
-            const category = document.getElementById('category').value;
-            const message = document.getElementById('message').value;
-            const today = new Date();
-            const dateStr = today.toLocaleDateString('fa-IR');
+            const form = this;
+            const submitBtn = form.querySelector('.form-submit');
+            const newRequest = {
+                id: Date.now(),
+                name: document.getElementById('name').value,
+                contact: document.getElementById('contactInfo').value,
+                category: document.getElementById('category').value,
+                message: document.getElementById('message').value,
+                date: new Date().toLocaleDateString('fa-IR'),
+                status: 'new'
+            };
 
-            const newRequest = { id: Date.now(), name: name, contact: contactInfo, category: category, message: message, date: dateStr, status: 'new' };
+            const savedLocally = saveRequestLocally(newRequest);
 
-            let requests = JSON.parse(localStorage.getItem('mm_requests')) || [];
-            requests.push(newRequest);
-            localStorage.setItem('mm_requests', JSON.stringify(requests));
+            if (!FORM_ENDPOINT) {
+                if (savedLocally) {
+                    alert('درخواست شما با موفقیت ثبت شد و به پنل مدیریت ارسال گردید.');
+                    form.reset();
+                } else {
+                    alert('ثبت درخواست انجام نشد. لطفاً از طریق ایمیل یا شبکه‌های اجتماعی با ما تماس بگیرید.');
+                }
+                return;
+            }
 
-            alert('درخواست شما با موفقیت ثبت شد و به پنل مدیریت ارسال گردید.');
-            this.reset();
+            submitBtn.disabled = true;
+            fetch(FORM_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify(newRequest)
+            }).then(res => {
+                if (!res.ok) throw new Error('bad status');
+                alert('درخواست شما با موفقیت ثبت شد. در کمتر از ۲۴ ساعت با شما تماس می‌گیریم.');
+                form.reset();
+            }).catch(() => {
+                alert('ارسال درخواست انجام نشد. لطفاً دوباره تلاش کنید یا از طریق ایمیل تماس بگیرید.');
+            }).finally(() => { submitBtn.disabled = false; });
         });
 
         let defaultArticles = [
@@ -607,31 +671,72 @@
             }
         ];
 
+        function escapeHtml(str) {
+            return String(str).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+        }
+
         function renderBlog() {
             const grid = document.getElementById('blogGrid');
-            localStorage.removeItem('mm_articles'); 
+            if (!grid) return;
 
-            grid.innerHTML = '';
-            
-            defaultArticles.reverse().forEach(art => { 
-                grid.innerHTML += `
+            grid.innerHTML = [...defaultArticles].reverse().map(art => `
                     <a href="#" class="blog-card">
                         <div class="blog-image-wrapper">
-                            <img src="${art.image}" alt="${art.title}" class="blog-image" 
-                                 onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=600&auto=format&fit=crop'; console.error('تصویر پیدا نشد: ' + this.src);">
+                            <img src="${escapeHtml(art.image)}" alt="${escapeHtml(art.title)}" class="blog-image"
+                                 onerror="var bad=this.src; this.onerror=null; this.src='https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=600&auto=format&fit=crop'; console.error('تصویر پیدا نشد: ' + bad);">
                         </div>
                         <div class="blog-content">
-                            <div class="blog-category">${art.category}</div>
-                            <h3 class="blog-title">${art.title}</h3>
-                            <p class="blog-excerpt">${art.excerpt}</p>
+                            <div class="blog-category">${escapeHtml(art.category)}</div>
+                            <h3 class="blog-title">${escapeHtml(art.title)}</h3>
+                            <p class="blog-excerpt">${escapeHtml(art.excerpt)}</p>
                             <span class="blog-read-more">ادامه مطلب ←</span>
                         </div>
                     </a>
-                `;
-            });
+                `).join('');
         }
 
         document.addEventListener('DOMContentLoaded', renderBlog);
+
+        // لینک‌های بدون مقصد (#) صفحه را به بالا نپرانند
+        document.getElementById('blogGrid').addEventListener('click', function(e) {
+            const link = e.target.closest('a.blog-card');
+            if (link && link.getAttribute('href') === '#') e.preventDefault();
+        });
+
+        // ===== سال فوتر، منوی موبایل و مشخص‌کردن بخش فعال در منو =====
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const y = new Date().toLocaleDateString('fa-IR', { year: 'numeric' });
+                const yearEl = document.getElementById('footerYear');
+                if (yearEl && y) yearEl.textContent = y;
+            } catch (e) {}
+
+            const header = document.querySelector('header');
+            const toggle = document.getElementById('menuToggle');
+            const navLinks = document.querySelectorAll('.nav-links a');
+
+            function setMenu(open) {
+                header.classList.toggle('menu-open', open);
+                toggle.classList.toggle('open', open);
+                toggle.setAttribute('aria-expanded', String(open));
+            }
+            toggle.addEventListener('click', () => setMenu(!header.classList.contains('menu-open')));
+            navLinks.forEach(a => a.addEventListener('click', () => setMenu(false)));
+            document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+            window.addEventListener('resize', () => { if (window.innerWidth > 768) setMenu(false); });
+
+            const pairs = [...navLinks]
+                .map(a => [a, document.querySelector(a.getAttribute('href'))])
+                .filter(pair => pair[1]);
+            function updateActive() {
+                const y = window.scrollY + 140;
+                let current = null;
+                pairs.forEach(([a, sec]) => { if (sec.offsetTop <= y) current = a; });
+                navLinks.forEach(a => a.classList.toggle('active', a === current));
+            }
+            window.addEventListener('scroll', updateActive, { passive: true });
+            updateActive();
+        });
     </script>
 </body>
 </html>
