@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>پنل مدیریت | Mm Contracts</title>
     <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
     
@@ -135,7 +136,45 @@
         .close-modal { flex: 1; padding: 12px; background: var(--bg-dark); color: white; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; font-family: inherit; font-weight: 600; }
         .send-reply-btn { flex: 1; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 10px; cursor: pointer; font-family: inherit; font-weight: 600; }
 
-        @media (max-width: 992px) { .sidebar { transform: translateX(100%); transition: 0.3s; } .main-content { margin-right: 0; width: 100%; } .table-container { overflow-x: auto; } table { min-width: 800px; } }
+        
+        .sidebar { z-index: 1500; transition: transform 0.3s; }
+        .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 1400; }
+        .header-start { display: flex; align-items: center; gap: 12px; }
+        .header-end { display: flex; align-items: center; gap: 12px; }
+        .menu-btn { display: none; width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main); font-size: 1.3rem; cursor: pointer; align-items: center; justify-content: center; }
+        .refresh-btn { background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); padding: 10px 18px; border-radius: 50px; font-family: inherit; font-size: 0.9rem; cursor: pointer; transition: background 0.3s; }
+        .refresh-btn:hover { background: var(--bg-hover); }
+        .user-profile { cursor: default; }
+        .login-btn:disabled, .add-article-btn:disabled, .save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(100%); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-overlay.show { display: block; }
+            .menu-btn { display: inline-flex; }
+            .main-content { margin-right: 0; width: 100%; padding: 25px 18px; }
+            .top-header { flex-wrap: wrap; gap: 15px; }
+            .table-container { overflow-x: auto; }
+            table { min-width: 800px; }
+            .page-title h1 { font-size: 1.4rem; }
+            .user-profile { padding: 6px 12px; gap: 10px; }
+            .table-header { flex-wrap: wrap; gap: 10px; }
+            .modal-content { padding: 24px; }
+            .settings-form { padding: 25px; }
+            .article-form { padding: 20px; }
+            .login-box { padding: 35px 24px; }
+            /* جلوگیری از زوم خودکار iOS هنگام فوکوس روی فیلدها */
+            .login-input-group input, .settings-form input, .article-form input[type="text"], .article-form textarea, .article-form select, .table-header input, .reply-box textarea { font-size: 16px; }
+        }
+        @media (max-width: 480px) { .user-profile span { display: none; } .refresh-btn { padding: 10px 14px; } }
+        /* ارتفاع واقعی صفحه در موبایل (نوار آدرس مرورگر) */
+        #login-screen { overflow-y: auto; padding: 20px; }
+        .sidebar { overflow-y: auto; }
+        @supports (height: 100dvh) {
+            body, #dashboard-screen { min-height: 100dvh; }
+            .sidebar, .main-content { height: 100dvh; }
+        }
+
     </style>
 </head>
 <body>
@@ -146,9 +185,9 @@
             <img src="assets/mahsa-logo.jpg" alt="لوگو">
             <h2>ورود به پنل مدیریت</h2>
             <p>لطفاً اطلاعات حساب کاربری خود را وارد کنید</p>
-            <div class="login-input-group"><label>ایمیل</label><input type="email" id="username" dir="ltr" placeholder="mahsamokhtar.law@gmail.com"></div>
-            <div class="login-input-group"><label>رمز عبور</label><input type="password" id="password" dir="ltr" placeholder="••••••••"></div>
-            <button class="login-btn" onclick="checkLogin()">ورود به داشبورد</button>
+            <div class="login-input-group"><label for="username">ایمیل</label><input type="email" id="username" dir="ltr" autocomplete="username" placeholder="you@example.com"></div>
+            <div class="login-input-group"><label for="password">رمز عبور</label><input type="password" id="password" dir="ltr" autocomplete="current-password" placeholder="••••••••"></div>
+            <button class="login-btn" id="loginBtn" onclick="checkLogin()">ورود به داشبورد</button>
             <div class="error-msg" id="loginError">ایمیل یا رمز عبور اشتباه است!</div>
         </div>
     </div>
@@ -156,15 +195,16 @@
     <!-- داشبورد -->
     <div id="dashboard-screen">
         
-        <aside class="sidebar">
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-logo"><img src="assets/mahsa-logo.jpg" alt="لوگو"><span>پنل مدیریت</span></div>
             <ul class="sidebar-menu">
-                <li><a class="nav-link active" onclick="showTab('dashboard', this)">داشبورد</a></li>
-                <li><a class="nav-link" onclick="showTab('consultations', this)">درخواست‌های مشاوره <span id="badgeConsultations" style="background:var(--accent); color:white; padding:2px 8px; border-radius:10px; font-size:0.7rem; margin-right:auto;">0</span></a></li>
-                <li><a class="nav-link" onclick="showTab('contracts', this)">قراردادها</a></li>
-                <li><a class="nav-link" onclick="showTab('articles', this)">مدیریت مقالات</a></li>
-                <li><a class="nav-link" onclick="showTab('settings', this)">تنظیمات</a></li>
-                <li><a onclick="logout()" style="color: var(--accent); margin-top: 20px; cursor:pointer;">خروج از حساب ←</a></li>
+                <li><a href="#" class="nav-link active" onclick="showTab('dashboard', this); return false;">داشبورد</a></li>
+                <li><a href="#" class="nav-link" onclick="showTab('consultations', this); return false;">درخواست‌های مشاوره <span id="badgeConsultations" style="background:var(--accent); color:white; padding:2px 8px; border-radius:10px; font-size:0.7rem; margin-right:auto;">0</span></a></li>
+                <li><a href="#" class="nav-link" onclick="showTab('contracts', this); return false;">قراردادها</a></li>
+                <li><a href="#" class="nav-link" onclick="showTab('articles', this); return false;">مدیریت مقالات</a></li>
+                <li><a href="#" class="nav-link" onclick="showTab('settings', this); return false;">تنظیمات</a></li>
+                <li><a href="#" onclick="logout(); return false;" style="color: var(--accent); margin-top: 20px; cursor:pointer;">خروج از حساب ←</a></li>
                 <li><a href="index.html" style="color: var(--text-muted); margin-top: 5px;">مشاهده سایت →</a></li>
             </ul>
         </aside>
@@ -172,11 +212,17 @@
         <main class="main-content">
             
             <div class="top-header">
-                <div class="page-title">
-                    <h1 id="pageTitle">داشبورد مدیریت</h1>
-                    <p>خوش آمدید، مهسا مختار. وضعیت درخواست‌ها را بررسی کنید.</p>
+                <div class="header-start">
+                    <button class="menu-btn" type="button" aria-label="منو" onclick="toggleSidebar()">☰</button>
+                    <div class="page-title">
+                        <h1 id="pageTitle">داشبورد مدیریت</h1>
+                        <p id="welcomeText">خوش آمدید، مهسا مختار. وضعیت درخواست‌ها را بررسی کنید.</p>
+                    </div>
                 </div>
-                <div class="user-profile" onclick="logout()"><span>مهسا مختار (خروج)</span><img src="assets/mahsa-portrait.png" alt="پروفایل"></div>
+                <div class="header-end">
+                    <button class="refresh-btn" type="button" onclick="refreshAll()">↻ بروزرسانی</button>
+                    <div class="user-profile"><span id="profileName">مهسا مختار</span><img src="assets/mahsa-portrait.png" alt="پروفایل"></div>
+                </div>
             </div>
 
             <!-- تب داشبورد -->
@@ -213,24 +259,17 @@
             <!-- تب قراردادها -->
             <div id="tab-contracts" class="tab-content">
                 <div class="chart-container">
-                    <h2 style="margin-bottom: 10px;">نمودار قراردادهای تنظیم شده (۶ ماه اخیر)</h2>
-                    <p style="color: var(--text-muted); font-size: 0.9rem;">تعداد قراردادهای موفق ثبت شده در سیستم</p>
-                    <div class="chart-bars">
-                        <div class="bar-wrapper"><div class="bar" style="height: 40%;" data-val="4"></div><span class="bar-label">فروردین</span></div>
-                        <div class="bar-wrapper"><div class="bar" style="height: 60%;" data-val="6"></div><span class="bar-label">اردیبهشت</span></div>
-                        <div class="bar-wrapper"><div class="bar" style="height: 30%;" data-val="3"></div><span class="bar-label">خرداد</span></div>
-                        <div class="bar-wrapper"><div class="bar" style="height: 80%;" data-val="8"></div><span class="bar-label">تیر</span></div>
-                        <div class="bar-wrapper"><div class="bar" style="height: 50%;" data-val="5"></div><span class="bar-label">مرداد</span></div>
-                        <div class="bar-wrapper"><div class="bar" style="height: 90%;" data-val="9"></div><span class="bar-label">شهریور</span></div>
-                    </div>
+                    <h2 style="margin-bottom: 10px;">نمودار درخواست‌های قرارداد (۶ ماه اخیر)</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">تعداد درخواست‌های تنظیم، بازبینی و تصحیح قرارداد ثبت‌شده در سیستم</p>
+                    <div class="chart-bars" id="chartBars"></div>
                 </div>
                 <div class="table-container">
                     <div class="table-header">
-                        <h2>درخواست‌های تنظیم قرارداد</h2>
+                        <h2>درخواست‌های قرارداد</h2>
                         <input type="text" placeholder="جستجوی نام..." onkeyup="searchTable('contractTable', this.value)">
                     </div>
                     <table id="contractTable">
-                        <thead><tr><th>نام مشتری</th><th>راه ارتباطی</th><th>تاریخ</th><th>وضعیت</th><th>عملیات</th></tr></thead>
+                        <thead><tr><th>نام مشتری</th><th>نوع</th><th>راه ارتباطی</th><th>تاریخ</th><th>وضعیت</th><th>عملیات</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
@@ -253,7 +292,7 @@
 
                     <div class="form-group">
                         <label>عنوان مقاله</label>
-                        <input type="text" id="artTitle" placeholder="عنوان جذاب مقاله...">
+                        <input type="text" id="artTitle" placeholder="عنوان جذاب مقاله..." maxlength="200">
                     </div>
                     <div class="form-group">
                         <label>دسته‌بندی</label>
@@ -266,9 +305,9 @@
                     </div>
                     <div class="form-group">
                         <label>توضیحات (خلاصه مقاله)</label>
-                        <textarea id="artExcerpt" rows="4" placeholder="خلاصه‌ای از مقاله..."></textarea>
+                        <textarea id="artExcerpt" rows="4" placeholder="خلاصه‌ای از مقاله..." maxlength="2000"></textarea>
                     </div>
-                    <button class="add-article-btn" onclick="addArticle()">افزودن مقاله</button>
+                    <button class="add-article-btn" id="addArticleBtn" onclick="addArticle()">افزودن مقاله</button>
                 </div>
 
                 <h2 style="margin-bottom: 20px;">مقالات فعلی سایت</h2>
@@ -281,10 +320,10 @@
             <div id="tab-settings" class="tab-content">
                 <div class="settings-form">
                     <h2 style="margin-bottom: 20px;">تنظیمات پنل</h2>
-                    <div class="form-group"><label>نام نمایشی ادمین</label><input type="text" value="مهسا مختار"></div>
-                    <div class="form-group"><label>ایمیل پشتیبانی</label><input type="email" value="mahsamokhtar.law@gmail.com" dir="ltr"></div>
-                    <div class="form-group"><label>متن فوتر سایت</label><input type="text" value="© ۱۴۰۳ Mm Contracts — تمامی حقوق محفوظ است."></div>
-                    <button class="save-btn" onclick="alert('تنظیمات با موفقیت ذخیره شد!')">ذخیره تغییرات</button>
+                    <div class="form-group"><label for="setAdminName">نام نمایشی ادمین</label><input type="text" id="setAdminName" value="مهسا مختار" maxlength="100"></div>
+                    <div class="form-group"><label for="setSupportEmail">ایمیل پشتیبانی (روی دکمه ایمیل سایت)</label><input type="email" id="setSupportEmail" dir="ltr" placeholder="خالی = ایمیل پیش‌فرض سایت" maxlength="150"></div>
+                    <div class="form-group"><label for="setFooterText">متن فوتر سایت</label><input type="text" id="setFooterText" placeholder="خالی = متن پیش‌فرض (با سال خودکار)" maxlength="300"></div>
+                    <button class="save-btn" id="saveSettingsBtn" onclick="saveSettings()">ذخیره تغییرات</button>
                 </div>
             </div>
 
@@ -299,46 +338,143 @@
             <p><strong>راه ارتباطی:</strong> <span id="modalContact" dir="ltr" style="display:inline-block;"></span></p>
             <p><strong>نوع درخواست:</strong> <span id="modalType"></span></p>
             <p style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);"><strong>متن پیام:</strong></p>
-            <p id="modalBody" style="color: var(--text-muted);"></p>
+            <p id="modalBody" style="color: var(--text-muted); white-space: pre-wrap;"></p>
             
             <div class="reply-box">
-                <p><strong>پاسخ به مشتری (اختیاری):</strong></p>
+                <p><strong>یادداشت / پاسخ (اختیاری):</strong></p>
                 <textarea id="replyText" placeholder="پاسخ خود را اینجا بنویسید..."></textarea>
+                <p style="font-size:0.8rem; color: var(--text-muted); margin-bottom:0;">پاسخ در سامانه ذخیره می‌شود و برای مشتری ایمیل نمی‌رود.
+                    <a id="replyMail" href="#" target="_blank" rel="noopener" style="display:none; color: var(--accent);">ارسال همین متن با ایمیل ←</a></p>
             </div>
 
             <div class="modal-actions">
-                <button class="send-reply-btn" onclick="sendReply()">ارسال پاسخ و بستن</button>
+                <button class="send-reply-btn" onclick="sendReply()">ثبت پاسخ و بستن</button>
                 <button class="close-modal" onclick="closeModal()">انصراف</button>
             </div>
         </div>
     </div>
 
+    <script src="supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
     <script>
-        // ================== سیستم لاگین ==================
-        function checkLogin() {
-            const user = document.getElementById('username').value;
-            const pass = document.getElementById('password').value;
-            const errorMsg = document.getElementById('loginError');
+        // ================== اتصال به Supabase ==================
+        const CFG = window.MM_CONFIG || {};
+        const sb = (window.supabase && CFG.SUPABASE_URL && CFG.SUPABASE_ANON_KEY && !/YOUR-/.test(CFG.SUPABASE_URL + CFG.SUPABASE_ANON_KEY))
+            ? window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY)
+            : null;
 
-            if (user === "mahsamokhtar.law@gmail.com" && pass === "123mahsa456") {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('dashboard-screen').classList.add('active');
-                loadData(); 
-                loadArticles();
-            } else {
-                errorMsg.style.display = 'block';
-            }
+        const BUCKET = 'article-images';
+        const FALLBACK_IMG = 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=600&auto=format&fit=crop';
+
+        let requestsCache = [];
+        let articlesCache = [];
+        let currentReqId = null;
+        let adminName = 'مهسا مختار';
+
+        function esc(v) {
+            return String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
         }
+        function fmtDate(iso) {
+            try { return new Date(iso).toLocaleDateString('fa-IR'); } catch (e) { return ''; }
+        }
+        function typeName(cat) {
+            if (cat === 'consultation') return 'مشاوره حقوقی';
+            if (cat === 'contract') return 'تنظیم و بازبینی قرارداد';
+            if (cat === 'review') return 'تصحیح قرارداد';
+            return cat;
+        }
+        function getStatusName(status) {
+            if (status === 'new') return 'جدید';
+            if (status === 'contacted') return 'در حال پیگیری';
+            return 'بسته شده';
+        }
+        function safeStatus(s) { return ['new', 'contacted', 'done'].includes(s) ? s : 'done'; }
 
-        function logout() {
+        // ================== سیستم لاگین (Supabase Auth) ==================
+        function showLoginError(msg) {
+            const el = document.getElementById('loginError');
+            el.innerText = msg;
+            el.style.display = 'block';
+        }
+        function showLogin(keepError) {
             document.getElementById('dashboard-screen').classList.remove('active');
             document.getElementById('login-screen').classList.remove('hidden');
             document.getElementById('username').value = '';
             document.getElementById('password').value = '';
-            document.getElementById('loginError').style.display = 'none';
+            if (!keepError) document.getElementById('loginError').style.display = 'none';
+            toggleSidebar(false);
         }
 
-        // ================== سیستم تب‌ها ==================
+        async function checkLogin() {
+            const email = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value;
+            const btn = document.getElementById('loginBtn');
+            document.getElementById('loginError').style.display = 'none';
+
+            if (!sb) { showLoginError('اتصال به Supabase تنظیم نشده است. فایل supabase-config.js را پر کنید.'); return; }
+            if (!email || !pass) { showLoginError('ایمیل و رمز عبور را وارد کنید.'); return; }
+
+            btn.disabled = true;
+            try {
+                const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+                if (error) {
+                    showLoginError(/invalid/i.test(error.message) ? 'ایمیل یا رمز عبور اشتباه است!' : 'ورود انجام نشد. اتصال اینترنت را بررسی کنید.');
+                    return;
+                }
+                await enterDashboard();
+            } catch (e) {
+                showLoginError('ورود انجام نشد. اتصال اینترنت را بررسی کنید.');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+
+        // فقط حساب ادمین اجازه ورود دارد (همان بررسی سمت دیتابیس)
+        async function verifyAdmin() {
+            try {
+                const { data, error } = await sb.rpc('is_admin');
+                return !error && data === true;
+            } catch (e) { return false; }
+        }
+
+        async function enterDashboard() {
+            if (!(await verifyAdmin())) {
+                try { await sb.auth.signOut(); } catch (e) {}
+                showLogin(true);
+                showLoginError('این حساب دسترسی ادمین ندارد.');
+                return false;
+            }
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('dashboard-screen').classList.add('active');
+            ['dashboardTable', 'consultTable', 'contractTable'].forEach(id => {
+                document.querySelector('#' + id + ' tbody').innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--text-muted);">در حال بارگذاری...</td></tr>';
+            });
+            await Promise.all([loadSettings(), loadData(), loadArticles()]);
+            return true;
+        }
+
+        async function logout() {
+            if (sb) { try { await sb.auth.signOut(); } catch (e) {} }
+            showLogin();
+        }
+
+        function refreshAll() { loadSettings(); loadData(); loadArticles(); }
+
+        document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') checkLogin(); });
+        document.getElementById('username').addEventListener('keydown', e => { if (e.key === 'Enter') checkLogin(); });
+
+        if (sb) {
+            sb.auth.getSession().then(({ data }) => { if (data && data.session) enterDashboard(); });
+            sb.auth.onAuthStateChange(event => { if (event === 'SIGNED_OUT') showLogin(true); });
+        }
+
+        // ================== سیستم تب‌ها و منوی موبایل ==================
+        function toggleSidebar(force) {
+            const open = typeof force === 'boolean' ? force : !document.getElementById('sidebar').classList.contains('open');
+            document.getElementById('sidebar').classList.toggle('open', open);
+            document.getElementById('sidebarOverlay').classList.toggle('show', open);
+        }
+
         function showTab(tabId, element) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
@@ -348,15 +484,21 @@
 
             const titles = { dashboard: 'داشبورد مدیریت', consultations: 'درخواست‌های مشاوره', contracts: 'قراردادها', articles: 'مدیریت مقالات', settings: 'تنظیمات' };
             document.getElementById('pageTitle').innerText = titles[tabId];
+            toggleSidebar(false);
         }
 
-        // ================== بارگذاری داده‌ها ==================
-        let currentReqId = null;
+        // ================== بارگذاری درخواست‌ها ==================
+        async function loadData() {
+            if (!sb) return;
+            const { data, error } = await sb.from('requests').select('*').order('created_at', { ascending: false });
+            if (error) { alert('خطا در دریافت درخواست‌ها: ' + error.message); return; }
+            requestsCache = data || [];
+            renderRequests();
+        }
 
-        function loadData() {
-            const requests = JSON.parse(localStorage.getItem('mm_requests')) || [];
-            const consultations = requests.filter(r => r.category === 'consultation');
-            const contracts = requests.filter(r => r.category === 'contract');
+        function renderRequests() {
+            const consultations = requestsCache.filter(r => r.category === 'consultation');
+            const contracts = requestsCache.filter(r => r.category === 'contract' || r.category === 'review');
 
             document.getElementById('totalConsult').innerText = consultations.length;
             document.getElementById('newConsult').innerText = consultations.filter(r => r.status === 'new').length;
@@ -365,68 +507,115 @@
             document.getElementById('badgeConsultations').innerText = consultations.filter(r => r.status === 'new').length;
 
             const dashBody = document.querySelector('#dashboardTable tbody');
-            dashBody.innerHTML = '';
-            consultations.slice(-4).reverse().forEach(req => {
-                dashBody.innerHTML += `<tr><td>${req.name}</td><td>مشاوره حقوقی</td><td>${req.date}</td><td><span class="badge ${req.status}">${getStatusName(req.status)}</span></td></tr>`;
-            });
+            dashBody.innerHTML = consultations.slice(0, 4).map(req =>
+                `<tr><td>${esc(req.name)}</td><td>مشاوره حقوقی</td><td>${fmtDate(req.created_at)}</td><td><span class="badge ${safeStatus(req.status)}">${getStatusName(req.status)}</span></td></tr>`
+            ).join('') || '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">هنوز درخواستی ثبت نشده است.</td></tr>';
 
-            fillTable('consultTable', consultations);
-            fillTable('contractTable', contracts);
+            fillTable('consultTable', consultations, false);
+            fillTable('contractTable', contracts, true);
+            renderChart(contracts);
         }
 
-        function fillTable(tableId, data) {
+        function fillTable(tableId, data, withType) {
             const tbody = document.querySelector(`#${tableId} tbody`);
-            tbody.innerHTML = '';
-            
+            const cols = withType ? 6 : 5;
+
             if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--text-muted);">هیچ درخواستی ثبت نشده است.</td></tr>';
+                tbody.innerHTML = `<tr><td colspan="${cols}" style="text-align:center; color:var(--text-muted);">هیچ درخواستی ثبت نشده است.</td></tr>`;
                 return;
             }
 
-            data.reverse().forEach(req => {
-                tbody.innerHTML += `
+            tbody.innerHTML = data.map(req => `
                     <tr>
-                        <td>${req.name}</td>
-                        <td>${req.contact}</td>
-                        <td>${req.date}</td>
-                        <td><span class="badge ${req.status}">${getStatusName(req.status)}</span></td>
+                        <td>${esc(req.name)}</td>
+                        ${withType ? `<td>${esc(typeName(req.category))}</td>` : ''}
+                        <td>${esc(req.contact)}</td>
+                        <td>${fmtDate(req.created_at)}</td>
+                        <td><span class="badge ${safeStatus(req.status)}">${getStatusName(req.status)}</span></td>
                         <td class="action-btns">
-                            <button class="btn-icon" title="مشاهده و پاسخ" onclick="openModal(${req.id})">👁</button>
-                            <button class="btn-icon" title="تغییر وضعیت" onclick="changeStatus(${req.id})">↩</button>
-                            <button class="btn-icon" title="حذف" onclick="deleteReq(${req.id})">🗑</button>
+                            <button class="btn-icon" title="مشاهده و پاسخ" data-act="view" data-id="${esc(req.id)}">👁</button>
+                            <button class="btn-icon" title="تغییر وضعیت" data-act="status" data-id="${esc(req.id)}">↩</button>
+                            <button class="btn-icon" title="حذف" data-act="del" data-id="${esc(req.id)}">🗑</button>
                         </td>
                     </tr>
-                `;
-            });
+                `).join('');
         }
 
-        function getStatusName(status) {
-            if (status === 'new') return 'جدید';
-            if (status === 'contacted') return 'در حال پیگیری';
-            return 'بسته شده';
+        // نمودار ۶ ماه اخیر (تقویم شمسی) بر اساس داده‌های واقعی
+        function persianParts(d) {
+            const o = {};
+            new Intl.DateTimeFormat('en-US-u-ca-persian', { year: 'numeric', month: 'numeric', day: 'numeric' })
+                .formatToParts(d).forEach(p => { o[p.type] = p.value; });
+            return { y: +o.year, m: +o.month, d: +o.day };
+        }
+        function renderChart(contracts) {
+            const box = document.getElementById('chartBars');
+            const monthFmt = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { month: 'long' });
+            const months = [];
+            let cursor = new Date();
+            cursor.setHours(12, 0, 0, 0);
+            for (let i = 0; i < 6; i++) {
+                const pp = persianParts(cursor);
+                months.unshift({ key: pp.y * 100 + pp.m, label: monthFmt.format(cursor), count: 0 });
+                cursor = new Date(cursor.getTime() - pp.d * 86400000); // آخرین روز ماه قبل
+            }
+            contracts.forEach(r => {
+                const pp = persianParts(new Date(r.created_at));
+                const m = months.find(x => x.key === pp.y * 100 + pp.m);
+                if (m) m.count++;
+            });
+            const max = Math.max(1, ...months.map(m => m.count));
+            box.innerHTML = months.map(m =>
+                `<div class="bar-wrapper"><div class="bar" style="height: ${Math.max(3, Math.round(m.count / max * 100))}%;" data-val="${m.count.toLocaleString('fa-IR')}"></div><span class="bar-label">${esc(m.label)}</span></div>`
+            ).join('');
         }
 
         // ================== عملیات روی درخواست‌ها ==================
+        document.addEventListener('click', function(e) {
+            const b = e.target.closest('[data-act]');
+            if (!b) return;
+            const id = b.dataset.id;
+            if (b.dataset.act === 'view') openModal(id);
+            else if (b.dataset.act === 'status') changeStatus(id);
+            else if (b.dataset.act === 'del') deleteReq(id);
+            else if (b.dataset.act === 'delart') deleteArticle(id);
+        });
+
         function openModal(id) {
-            const requests = JSON.parse(localStorage.getItem('mm_requests')) || [];
-            const req = requests.find(r => r.id === id);
+            const req = requestsCache.find(r => r.id === id);
             if (!req) return;
 
             currentReqId = id;
             document.getElementById('modalName').innerText = req.name;
             document.getElementById('modalContact').innerText = req.contact;
-            document.getElementById('modalType').innerText = req.category === 'consultation' ? 'مشاوره حقوقی' : 'تنظیم قرارداد';
+            document.getElementById('modalType').innerText = typeName(req.category);
             document.getElementById('modalBody').innerText = req.message;
-            document.getElementById('replyText').value = '';
+            document.getElementById('replyText').value = req.reply || '';
+            updateReplyMail();
             document.getElementById('messageModal').classList.add('active');
         }
+
+        function updateReplyMail() {
+            const req = requestsCache.find(r => r.id === currentReqId);
+            const link = document.getElementById('replyMail');
+            if (req && req.contact.includes('@') && !/\s/.test(req.contact.trim())) {
+                const body = document.getElementById('replyText').value;
+                link.href = 'mailto:' + encodeURIComponent(req.contact.trim()).replace(/%40/g, '@') + '?subject=' + encodeURIComponent('پاسخ به درخواست شما - Mm Contracts') + '&body=' + encodeURIComponent(body);
+                link.style.display = 'inline';
+            } else {
+                link.style.display = 'none';
+            }
+        }
+        document.getElementById('replyText').addEventListener('input', updateReplyMail);
 
         function closeModal() {
             document.getElementById('messageModal').classList.remove('active');
             currentReqId = null;
         }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); toggleSidebar(false); } });
+        window.addEventListener('resize', () => { if (window.innerWidth > 992) toggleSidebar(false); });
 
-        function sendReply() {
+        async function sendReply() {
             if (!currentReqId) return;
             const reply = document.getElementById('replyText').value;
             
@@ -435,41 +624,36 @@
                 return;
             }
 
-            let requests = JSON.parse(localStorage.getItem('mm_requests')) || [];
-            const reqIndex = requests.findIndex(r => r.id === currentReqId);
-            
-            if (reqIndex > -1) {
-                requests[reqIndex].status = 'done';
-                requests[reqIndex].reply = reply;
-                localStorage.setItem('mm_requests', JSON.stringify(requests));
-                alert('پاسخ شما ثبت شد و وضعیت درخواست به «بسته شده» تغییر یافت.');
-                closeModal();
-                loadData();
+            const { data, error } = await sb.from('requests').update({ status: 'done', reply: reply.trim() }).eq('id', currentReqId).select();
+            if (error || !data || data.length === 0) {
+                alert('ثبت پاسخ انجام نشد' + (error ? ': ' + error.message : '. دسترسی ادمین را بررسی کنید.'));
+                return;
             }
+            alert('پاسخ شما ثبت شد و وضعیت درخواست به «بسته شده» تغییر یافت.');
+            closeModal();
+            loadData();
         }
 
-        function changeStatus(id) {
-            let requests = JSON.parse(localStorage.getItem('mm_requests')) || [];
-            const reqIndex = requests.findIndex(r => r.id === id);
-            
-            if (reqIndex > -1) {
-                let status = requests[reqIndex].status;
-                if (status === 'new') requests[reqIndex].status = 'contacted';
-                else if (status === 'contacted') requests[reqIndex].status = 'done';
-                else requests[reqIndex].status = 'new';
-                
-                localStorage.setItem('mm_requests', JSON.stringify(requests));
-                loadData();
+        async function changeStatus(id) {
+            const req = requestsCache.find(r => r.id === id);
+            if (!req) return;
+            const next = req.status === 'new' ? 'contacted' : (req.status === 'contacted' ? 'done' : 'new');
+            const { data, error } = await sb.from('requests').update({ status: next }).eq('id', id).select();
+            if (error || !data || data.length === 0) {
+                alert('تغییر وضعیت انجام نشد' + (error ? ': ' + error.message : '.'));
+                return;
             }
+            loadData();
         }
 
-        function deleteReq(id) {
-            if (confirm("آیا از حذف این درخواست اطمینان دارید؟")) {
-                let requests = JSON.parse(localStorage.getItem('mm_requests')) || [];
-                requests = requests.filter(r => r.id !== id);
-                localStorage.setItem('mm_requests', JSON.stringify(requests));
-                loadData();
+        async function deleteReq(id) {
+            if (!confirm("آیا از حذف این درخواست اطمینان دارید؟")) return;
+            const { data, error } = await sb.from('requests').delete().eq('id', id).select();
+            if (error || !data || data.length === 0) {
+                alert('حذف انجام نشد' + (error ? ': ' + error.message : '.'));
+                return;
             }
+            loadData();
         }
 
         function searchTable(tableId, query) {
@@ -481,127 +665,167 @@
         }
 
         // ================== مدیریت مقالات ==================
-        let defaultArticles = [
-            {
-                id: 1,
-                image: "https://images.unsplash.com/photo-1450133064473-71024230f91e?q=80&w=600&auto=format&fit=crop",
-                category: "قراردادها",
-                title: "۵ نکته کلیدی قبل از امضای قرارداد سرمایه‌گذاری",
-                excerpt: "جذب سرمایه‌گذار یکی از مهم‌ترین مراحل رشد استارتاپ است. اما یک بند اشتباه می‌تواند کنترل شرکت را از شما بگیرد..."
-            },
-            {
-                id: 2,
-                image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=600&auto=format&fit=crop",
-                category: "ریسک حقوقی",
-                title: "چگونه از ریسک‌های حقوقی استارتاپ جلوگیری کنیم؟",
-                excerpt: "بسیاری از استارتاپ‌ها به دلیل عدم آگاهی از قوانین، درگیر پرونده‌های حقوقی پرهزینه می‌شوند. پیشگیری همیشه ارزان‌تر است..."
-            },
-            {
-                id: 3,
-                image: "https://images.unsplash.com/photo-1505664194779-8beaceb93744?q=80&w=600&auto=format&fit=crop",
-                category: "قوانین کار",
-                title: "راهنمای کامل قراردادهای استخدامی در استارتاپ‌ها",
-                excerpt: "استخدام اولین کارمندان، نیازمند قراردادهای شفاف است. با رعایت این اصول، از اختلافات آینده با تیم خود جلوگیری کنید..."
-            }
-        ];
-
-        let uploadedImageBase64 = "";
-
         function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            if (preview.dataset.url) { URL.revokeObjectURL(preview.dataset.url); preview.dataset.url = ''; }
             if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    uploadedImageBase64 = e.target.result;
-                    const preview = document.getElementById('imagePreview');
-                    preview.src = uploadedImageBase64;
-                    preview.style.display = 'block';
-                    
-                    document.querySelector('.file-upload-text').style.display = 'none';
-                    document.querySelector('.file-upload-icon').style.display = 'none';
-                }
-                reader.readAsDataURL(input.files[0]);
+                const f = input.files[0];
+                if (!f.type.startsWith('image/')) { alert('لطفاً فقط فایل تصویری انتخاب کنید.'); input.value = ''; return; }
+                const url = URL.createObjectURL(f);
+                preview.dataset.url = url;
+                preview.src = url;
+                preview.style.display = 'block';
+                document.querySelector('.file-upload-text').style.display = 'none';
+                document.querySelector('.file-upload-icon').style.display = 'none';
             }
         }
 
-        function loadArticles() {
-            let articles = JSON.parse(localStorage.getItem('mm_articles'));
-            
-            if (!articles || articles.length === 0) {
-                articles = defaultArticles;
-                localStorage.setItem('mm_articles', JSON.stringify(articles));
-            }
+        function resetArticleForm() {
+            const preview = document.getElementById('imagePreview');
+            if (preview.dataset.url) { URL.revokeObjectURL(preview.dataset.url); preview.dataset.url = ''; }
+            document.getElementById('artTitle').value = '';
+            document.getElementById('artExcerpt').value = '';
+            document.getElementById('artImageFile').value = '';
+            preview.style.display = 'none';
+            preview.src = '';
+            document.querySelector('.file-upload-text').style.display = 'block';
+            document.querySelector('.file-upload-icon').style.display = 'block';
+        }
 
-            const container = document.getElementById('articlesContainer');
-            container.innerHTML = '';
-
-            if (articles.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-muted);">هیچ مقاله‌ای وجود ندارد. از فرم بالا اضافه کنید.</p>';
-                return;
-            }
-
-            articles.forEach(art => {
-                container.innerHTML += `
-                    <div class="article-item">
-                        <img src="${art.image}" alt="${art.title}" onerror="this.src='https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=600&auto=format&fit=crop'">
-                        <div class="article-item-content">
-                            <div style="font-size:0.8rem; color:var(--accent); margin-bottom:5px;">${art.category}</div>
-                            <h4>${art.title}</h4>
-                            <p>${art.excerpt}</p>
-                            <button class="delete-btn" onclick="deleteArticle(${art.id})">حذف مقاله</button>
-                        </div>
-                    </div>
-                `;
+        // کوچک‌کردن عکس قبل از آپلود (حداکثر ۱۲۰۰ پیکسل، JPEG)
+        function resizeImage(file, maxW = 1200) {
+            return new Promise((resolve, reject) => {
+                const url = URL.createObjectURL(file);
+                const img = new Image();
+                img.onload = () => {
+                    const scale = Math.min(1, maxW / img.width);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.round(img.width * scale);
+                    canvas.height = Math.round(img.height * scale);
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    URL.revokeObjectURL(url);
+                    canvas.toBlob(b => b ? resolve(b) : reject(new Error('تبدیل تصویر ناموفق بود')), 'image/jpeg', 0.85);
+                };
+                img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('این فایل به‌عنوان تصویر خوانده نشد')); };
+                img.src = url;
             });
         }
 
-        function addArticle() {
-            const title = document.getElementById('artTitle').value;
+        async function uploadImage(file) {
+            const blob = await resizeImage(file);
+            const name = Date.now() + '-' + Math.random().toString(36).slice(2, 10) + '.jpg';
+            const { error } = await sb.storage.from(BUCKET).upload(name, blob, { contentType: 'image/jpeg', cacheControl: '31536000' });
+            if (error) throw error;
+            return sb.storage.from(BUCKET).getPublicUrl(name).data.publicUrl;
+        }
+
+        async function loadArticles() {
+            if (!sb) return;
+            const { data, error } = await sb.from('articles').select('*').order('created_at', { ascending: false });
+            if (error) { alert('خطا در دریافت مقالات: ' + error.message); return; }
+            articlesCache = data || [];
+
+            const container = document.getElementById('articlesContainer');
+            if (articlesCache.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);">هیچ مقاله‌ای وجود ندارد. از فرم بالا اضافه کنید.</p>';
+                return;
+            }
+            container.innerHTML = articlesCache.map(art => `
+                    <div class="article-item">
+                        <img src="${esc(art.image_url || FALLBACK_IMG)}" alt="${esc(art.title)}" onerror="this.onerror=null; this.src='${FALLBACK_IMG}'">
+                        <div class="article-item-content">
+                            <div style="font-size:0.8rem; color:var(--accent); margin-bottom:5px;">${esc(art.category)}</div>
+                            <h4>${esc(art.title)}</h4>
+                            <p>${esc(art.excerpt)}</p>
+                            <button class="delete-btn" data-act="delart" data-id="${esc(art.id)}">حذف مقاله</button>
+                        </div>
+                    </div>
+                `).join('');
+        }
+
+        async function addArticle() {
+            const title = document.getElementById('artTitle').value.trim();
             const category = document.getElementById('artCategory').value;
-            const excerpt = document.getElementById('artExcerpt').value;
+            const excerpt = document.getElementById('artExcerpt').value.trim();
+            const file = document.getElementById('artImageFile').files[0];
+            const btn = document.getElementById('addArticleBtn');
 
             if (!title || !excerpt) {
                 alert('لطفاً عنوان و توضیحات مقاله را وارد کنید.');
                 return;
             }
 
-            let finalImage = uploadedImageBase64;
-            if (!finalImage) {
-                finalImage = 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=600&auto=format&fit=crop';
+            btn.disabled = true;
+            btn.innerText = 'در حال ذخیره...';
+            try {
+                let imageUrl = null;
+                if (file) imageUrl = await uploadImage(file);
+                const { error } = await sb.from('articles').insert({ title, category, excerpt, image_url: imageUrl });
+                if (error) throw error;
+                resetArticleForm();
+                await loadArticles();
+                alert('مقاله با موفقیت اضافه شد!');
+            } catch (e) {
+                alert('افزودن مقاله انجام نشد: ' + (e.message || e));
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'افزودن مقاله';
             }
-
-            const newArticle = {
-                id: Date.now(),
-                image: finalImage,
-                title: title,
-                category: category,
-                excerpt: excerpt
-            };
-
-            let articles = JSON.parse(localStorage.getItem('mm_articles')) || [];
-            articles.push(newArticle);
-            localStorage.setItem('mm_articles', JSON.stringify(articles));
-
-            // ریست فرم
-            document.getElementById('artTitle').value = '';
-            document.getElementById('artExcerpt').value = '';
-            document.getElementById('artImageFile').value = '';
-            document.getElementById('imagePreview').style.display = 'none';
-            document.getElementById('imagePreview').src = '';
-            document.querySelector('.file-upload-text').style.display = 'block';
-            document.querySelector('.file-upload-icon').style.display = 'block';
-            uploadedImageBase64 = "";
-
-            loadArticles();
-            alert('مقاله با موفقیت اضافه شد!');
         }
 
-        function deleteArticle(id) {
-            if (confirm("آیا از حذف این مقاله اطمینان دارید؟")) {
-                let articles = JSON.parse(localStorage.getItem('mm_articles')) || [];
-                articles = articles.filter(a => a.id !== id);
-                localStorage.setItem('mm_articles', JSON.stringify(articles));
-                loadArticles();
+        async function deleteArticle(id) {
+            if (!confirm("آیا از حذف این مقاله اطمینان دارید؟")) return;
+            const art = articlesCache.find(a => a.id === id);
+            const { data, error } = await sb.from('articles').delete().eq('id', id).select();
+            if (error || !data || data.length === 0) {
+                alert('حذف انجام نشد' + (error ? ': ' + error.message : '.'));
+                return;
             }
+            // اگر عکس در مخزن Supabase بود، حذفش می‌کنیم
+            const marker = '/object/public/' + BUCKET + '/';
+            if (art && art.image_url && art.image_url.includes(marker)) {
+                const path = decodeURIComponent(art.image_url.split(marker)[1].split('?')[0]);
+                try { await sb.storage.from(BUCKET).remove([path]); } catch (e) {}
+            }
+            loadArticles();
+        }
+
+        // ================== تنظیمات ==================
+        async function loadSettings() {
+            if (!sb) return;
+            const { data, error } = await sb.from('site_settings').select('key,value');
+            if (error || !data) return;
+            const st = {};
+            data.forEach(r => { st[r.key] = r.value; });
+            if (st.admin_name) adminName = st.admin_name;
+            document.getElementById('setAdminName').value = adminName;
+            document.getElementById('setSupportEmail').value = st.support_email || '';
+            document.getElementById('setFooterText').value = st.footer_text || '';
+            applyAdminName();
+        }
+
+        function applyAdminName() {
+            document.getElementById('profileName').innerText = adminName;
+            document.getElementById('welcomeText').innerText = 'خوش آمدید، ' + adminName + '. وضعیت درخواست‌ها را بررسی کنید.';
+        }
+
+        async function saveSettings() {
+            const btn = document.getElementById('saveSettingsBtn');
+            const rows = [
+                { key: 'admin_name', value: document.getElementById('setAdminName').value.trim() },
+                { key: 'support_email', value: document.getElementById('setSupportEmail').value.trim() },
+                { key: 'footer_text', value: document.getElementById('setFooterText').value.trim() }
+            ];
+            btn.disabled = true;
+            const { error } = await sb.from('site_settings').upsert(rows, { onConflict: 'key' });
+            btn.disabled = false;
+            if (error) { alert('ذخیره تنظیمات انجام نشد: ' + error.message); return; }
+            adminName = rows[0].value || adminName;
+            applyAdminName();
+            alert('تنظیمات با موفقیت ذخیره شد!');
         }
     </script>
 </body>
