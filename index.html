@@ -37,6 +37,8 @@
 
         .hero-image-container { flex: 1; max-width: 540px; height: 80vh; max-height: 700px; position: relative; border-radius: var(--border-radius); overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.15); background: #e0e0e0; }
         .hero-image { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; display: block; }
+        
+        /* افکت باکس Hero (دسکتاپ) */
         .glass-info-box { position: absolute; bottom: 0; left: 0; width: 100%; padding: 70px 35px 35px; display: flex; justify-content: space-between; align-items: flex-end; background: linear-gradient(to top, rgba(20, 20, 20, 0.95) 0%, rgba(20, 20, 20, 0.7) 40%, transparent 100%); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); mask-image: linear-gradient(to bottom, transparent 0%, black 65%); -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 65%); z-index: 2; }
         .info-text { display: flex; flex-direction: column; gap: 6px; }
         .info-name { font-size: 2.6rem; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8), 0 2px 5px rgba(0, 0, 0, 0.6); }
@@ -145,10 +147,8 @@
             width: 100%;
             aspect-ratio: 1 / 1;
             overflow: hidden;
-            background-color: var(--bg-color);
-            /* ایجاد فید طوسی از پایین به بالا با درصد 70 */
-            mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+            mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
         }
 
         .blog-image { 
@@ -158,7 +158,15 @@
             display: block;
         }
 
-        .blog-content { padding: 0 30px 30px; display: flex; flex-direction: column; flex: 1; position: relative; z-index: 2; margin-top: -20px; }
+        .blog-content { 
+            padding: 0 30px 30px; 
+            display: flex; 
+            flex-direction: column; 
+            flex: 1; 
+            position: relative; 
+            z-index: 2; 
+            margin-top: -60px; 
+        }
         .blog-category { font-size: 0.8rem; color: var(--accent-color); font-weight: 700; margin-bottom: 10px; letter-spacing: 1px; }
         .blog-title { font-size: 1.3rem; font-weight: 800; color: var(--text-dark); margin-bottom: 15px; line-height: 1.5; }
         .blog-excerpt { font-size: 0.95rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 25px; flex: 1; }
@@ -237,7 +245,7 @@
             .form-input, .form-select, .form-textarea { padding: 14px 16px; }
             .blog-section { padding: 60px 5%; margin-top: 0; border-radius: 0; }
             .blog-card { flex-direction: column; height: auto; }
-            .blog-content { padding: 0 20px 20px; margin-top: -15px; }
+            .blog-content { padding: 0 20px 20px; margin-top: -40px; }
             .about-section { padding: 60px 5%; }
             .about-title { font-size: 2rem; text-align: center; }
             .about-desc { font-size: 1rem; text-align: center; }
