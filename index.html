@@ -46,18 +46,57 @@
 
         /* ================= بخش دوم (خدمات) ================= */
         .features-section { padding: 100px 5%; background-color: #ffffff; border-top-left-radius: 60px; border-top-right-radius: 60px; margin-top: -40px; position: relative; z-index: 10; }
-        .section-header { text-align: center; max-width: 700px; margin: 0 auto 60px; }
-        .section-subtitle { font-size: 1rem; color: var(--accent-color); font-weight: 700; margin-bottom: 15px; letter-spacing: 1px; }
+        .section-header { text-align: center; max-width: 700px; margin: 0 auto 50px; }
         .section-title { font-size: 2.8rem; font-weight: 900; color: var(--text-dark); line-height: 1.3; }
-        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
+        
+        /* چیدمان ۲ در ۲ */
+        .services-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; max-width: 1000px; margin: 0 auto; }
+        
         .service-card { background: var(--bg-color); border-radius: var(--border-radius); padding: 40px 30px; border: 1.5px solid var(--border-color); transition: all 0.4s ease; display: flex; flex-direction: column; gap: 20px; }
-        .service-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); border-color: #d0d0d0; background: #ffffff; }
+        .service-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); border-color: #d0d0d0; background: #ffffff; }
         .service-icon-box { width: 70px; height: 70px; background: #ffffff; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2rem; border: 1px solid var(--border-color); box-shadow: 0 10px 20px rgba(0,0,0,0.03); transition: all 0.4s ease; }
         .service-card:hover .service-icon-box { background: var(--accent-color); color: white; border-color: var(--accent-color); transform: rotate(-5deg) scale(1.1); }
         .service-title { font-size: 1.5rem; font-weight: 800; color: var(--text-dark); }
         .service-desc { font-size: 1rem; color: var(--text-muted); line-height: 1.8; }
 
-        /* ================= بخش چهارم (درباره من) ================= */
+        /* دکمه‌های داخل کارت‌ها */
+        .accordion-toggle-btn {
+            background-color: transparent; color: var(--text-dark); border: 1.5px solid var(--text-dark);
+            padding: 12px 30px; border-radius: 50px; font-family: inherit; font-size: 0.95rem; font-weight: 700;
+            cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px;
+            margin-top: 10px; width: fit-content;
+        }
+        .accordion-toggle-btn:hover { background-color: var(--text-dark); color: white; }
+        .accordion-toggle-btn .arrow-icon { transition: transform 0.4s ease; font-size: 0.8rem; }
+        .accordion-toggle-btn.active .arrow-icon { transform: rotate(180deg); }
+
+        /* باکس توضیحات مشترک زیر کارت‌ها */
+        .common-details-box {
+            max-width: 1000px; margin: 30px auto 0; background: var(--bg-color);
+            border-radius: var(--border-radius); border: 1.5px solid var(--border-color);
+            padding: 0; overflow: hidden; transition: all 0.4s ease;
+        }
+        .common-details-box.active {
+            padding: 30px; border-color: var(--accent-color);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
+        
+        .details-content { display: none; animation: fadeInDetails 0.5s ease; }
+        .details-content.active { display: block; }
+        
+        @keyframes fadeInDetails {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .details-inner { background: #ffffff; border-radius: 20px; padding: 30px; border: 1px solid var(--border-color); }
+        .details-section-title { font-size: 1.2rem; font-weight: 800; color: var(--text-dark); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--border-color); display: flex; align-items: center; gap: 10px; }
+        .details-text { font-size: 1rem; color: var(--text-muted); line-height: 2; margin-bottom: 20px; text-align: justify; }
+        .details-list { list-style: none; padding: 0; margin-bottom: 20px; }
+        .details-list li { position: relative; padding-right: 30px; margin-bottom: 10px; font-size: 0.95rem; color: var(--text-muted); line-height: 1.8; }
+        .details-list li::before { content: '✓'; position: absolute; right: 0; top: 2px; color: var(--accent-color); font-weight: 900; font-size: 1.1rem; }
+
+        /* ================= بخش چهارم (درباره من) - بازگشت به حالت ساده ================= */
         .about-section { padding: 120px 5%; background-color: var(--bg-color); }
         .about-container { max-width: 1200px; margin: 0 auto; display: flex; gap: 80px; align-items: center; }
         .about-image-wrapper { flex: 1; max-width: 450px; height: 600px; border-radius: var(--border-radius); overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.15); width: 100%; background: #e0e0e0; }
@@ -116,56 +155,7 @@
         .blog-read-more { font-size: 0.9rem; color: var(--text-dark); font-weight: 700; display: flex; align-items: center; gap: 5px; margin-top: auto; }
         .blog-read-more:hover { color: var(--accent-color); }
 
-        /* ================= اسلاید جدید: محاسبه‌گر ریسک حقوقی ================= */
-        .risk-section { padding: 100px 5%; background-color: var(--bg-color); position: relative; overflow: hidden; }
-        .risk-container { max-width: 800px; margin: 0 auto; background: #ffffff; border-radius: var(--border-radius); padding: 60px 50px; box-shadow: 0 30px 60px rgba(0,0,0,0.08); border: 1px solid var(--border-color); text-align: center; position: relative; z-index: 1; }
-        
-        .risk-title { font-size: 2.5rem; font-weight: 900; color: var(--text-dark); margin-bottom: 15px; line-height: 1.3; }
-        .risk-desc { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 40px; }
-
-        .risk-question { 
-            background: var(--bg-color); border-radius: 20px; padding: 25px; margin-bottom: 20px; 
-            display: flex; flex-direction: column; align-items: center; gap: 15px;
-            border: 1px solid var(--border-color); transition: all 0.3s;
-        }
-        .risk-question:hover { border-color: #d0d0d0; }
-        .risk-q-text { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); }
-        
-        .risk-options { display: flex; gap: 15px; width: 100%; max-width: 300px; }
-        .risk-btn {
-            flex: 1; padding: 12px; border-radius: 12px; border: 1.5px solid var(--border-color);
-            background: #ffffff; color: var(--text-muted); font-family: inherit; font-size: 1rem;
-            font-weight: 700; cursor: pointer; transition: all 0.3s;
-        }
-        .risk-btn:hover { border-color: var(--accent-color); color: var(--accent-color); }
-        .risk-btn.selected-yes { background: #4caf50; color: white; border-color: #4caf50; box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3); }
-        .risk-btn.selected-no { background: var(--accent-color); color: white; border-color: var(--accent-color); box-shadow: 0 5px 15px rgba(217, 56, 56, 0.3); }
-
-        .analyze-btn {
-            background: var(--text-dark); color: white; padding: 18px 45px;
-            border-radius: 50px; border: none; font-family: inherit; font-size: 1.15rem;
-            font-weight: 700; cursor: pointer; transition: all 0.3s; margin-top: 20px; width: 100%;
-        }
-        .analyze-btn:hover { background: var(--accent-color); transform: translateY(-3px); box-shadow: 0 15px 25px rgba(217, 56, 56, 0.25); }
-
-        .risk-result {
-            display: none; margin-top: 30px; padding: 30px; border-radius: 20px;
-            animation: fadeIn 0.5s ease;
-        }
-        .risk-result.active { display: block; }
-        .result-excellent { background: rgba(76, 175, 80, 0.1); border: 1px solid #4caf50; color: #2e7d32; }
-        .result-warning { background: rgba(245, 124, 0, 0.1); border: 1px solid #f57c00; color: #e65100; }
-        .result-danger { background: rgba(217, 56, 56, 0.1); border: 1px solid var(--accent-color); color: var(--accent-color); }
-        
-        .risk-result h3 { font-size: 1.5rem; font-weight: 900; margin-bottom: 15px; }
-        .risk-result p { font-size: 1.05rem; line-height: 1.8; margin-bottom: 20px; font-weight: 500; }
-        .result-action-btn {
-            display: inline-block; background: var(--text-dark); color: white; padding: 14px 35px;
-            border-radius: 50px; text-decoration: none; font-weight: 700; font-size: 1.05rem; transition: all 0.3s;
-        }
-        .result-action-btn:hover { background: var(--accent-color); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-
-        /* ================= بخش نهایی (CTA) ================= */
+        /* ================= بخش CTA نهایی ================= */
         .final-section { background: var(--text-dark); padding: 100px 5% 40px; border-top-left-radius: 60px; border-top-right-radius: 60px; color: white; margin-top: -40px; position: relative; z-index: 20; overflow: hidden; }
         .final-section::before { content: ''; position: absolute; top: -200px; left: 50%; transform: translateX(-50%); width: 600px; height: 600px; background: radial-gradient(circle, rgba(217, 56, 56, 0.15) 0%, transparent 70%); border-radius: 50%; z-index: 0; pointer-events: none; }
         .final-container { max-width: 1000px; margin: 0 auto; position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; text-align: center; }
@@ -184,7 +174,7 @@
         .footer-bottom { width: 100%; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 30px; display: flex; justify-content: center; align-items: center; font-size: 0.9rem; color: rgba(255, 255, 255, 0.5); }
 
         /* ================= ریسپانسیو ================= */
-        @media (max-width: 1200px) { .hero-title { font-size: 3.2rem; } .hero-desc { font-size: 1.2rem; } .hero-image-container { height: 75vh; } .info-name { font-size: 2.2rem; } .section-title { font-size: 2.4rem; } .contact-title { font-size: 2.8rem; } .about-title { font-size: 2.4rem; } .final-title { font-size: 2.8rem; } .risk-title { font-size: 2.2rem; } }
+        @media (max-width: 1200px) { .hero-title { font-size: 3.2rem; } .hero-desc { font-size: 1.2rem; } .hero-image-container { height: 75vh; } .info-name { font-size: 2.2rem; } .section-title { font-size: 2.4rem; } .contact-title { font-size: 2.8rem; } .about-title { font-size: 2.4rem; } .final-title { font-size: 2.8rem; } }
         @media (max-width: 992px) {
             .hero { flex-direction: column; height: auto; padding-top: 120px; gap: 50px; }
             .hero-text { align-items: center; text-align: center; width: 100%; }
@@ -214,6 +204,8 @@
             .glass-badge { display: none; }
             .features-section { padding: 60px 5%; margin-top: 0; border-radius: 0; }
             .section-title { font-size: 2rem; }
+            .services-grid { grid-template-columns: 1fr; }
+            
             .process-section { padding: 60px 5%; }
             .process-grid { gap: 20px; }
             .process-card { padding: 30px 20px; }
@@ -235,13 +227,6 @@
             .about-image-wrapper { width: 100%; max-width: 350px; height: auto; aspect-ratio: 1 / 1; margin: 0 auto 30px auto; border-radius: 30px; display: block; }
             .timeline-title { font-size: 1.15rem; }
             .timeline { text-align: right; }
-            
-            /* تنظیمات ریسپانسیو اسلاید ریسک */
-            .risk-section { padding: 60px 5%; }
-            .risk-container { padding: 40px 20px; }
-            .risk-title { font-size: 1.8rem; }
-            .risk-q-text { font-size: 1rem; }
-
             .final-section { padding: 60px 5% 30px; margin-top: 0; border-radius: 0; }
             .final-title { font-size: 2rem; }
             .final-desc { font-size: 1rem; }
@@ -268,7 +253,6 @@
             <li><a href="#process">مراحل همکاری</a></li>
             <li><a href="#contact">تماس</a></li>
             <li><a href="#blog">مقالات</a></li>
-            <li><a href="#risk">تست ریسک</a></li>
         </ul>
         <div class="header-actions">
             <a href="#contact" class="btn-dark">دریافت مشاوره</a>
@@ -277,7 +261,7 @@
 
     <main id="hero" class="hero">
         <div class="hero-text">
-            <h1 class="hero-title">راهنمایی حقوقی مطمئنی که <span>باید به آن اعتماد کنید.</span></h1>
+            <h1 class="hero-title" id="heroTitle">راهنمایی حقوقی مطمئنی که <span>باید به آن اعتماد کنید.</span></h1>
             <p class="hero-desc">ما به کسب‌وکارها و استارتاپ‌ها کمک می‌کنیم تا با استراتژی‌های حقوقی معتبر و شفاف، مسیر رشد خود را هموار کنند.</p>
             <div class="hero-buttons">
                 <a href="#contact" class="btn-primary">شروع کنیم <span>←</span></a>
@@ -298,28 +282,90 @@
 
     <section id="services" class="features-section">
         <div class="section-header">
-            <div class="section-subtitle">تخصص ما</div>
-            <h2 class="section-title">چگونه از کسب‌وکار شما محافظت می‌کنیم؟</h2>
+            <h2 class="section-title">خدمات ما</h2>
         </div>
+        
         <div class="services-grid">
             <div class="service-card">
                 <div class="service-icon-box">📄</div>
                 <h3 class="service-title">قراردادهای تجاری</h3>
                 <p class="service-desc">تنظیم، بازبینی و مذاکره قراردادهای تجاری مدرن با استانداردهای حقوقی به‌روز، متناسب با نیاز استارتاپ و کسب‌وکار شما.</p>
+                <button class="accordion-toggle-btn" onclick="toggleServiceDetails('s1', this)">
+                    <span>بیشتر بدانید</span><span class="arrow-icon">▼</span>
+                </button>
             </div>
+
             <div class="service-card">
                 <div class="service-icon-box">⚖️</div>
                 <h3 class="service-title">مشاوره استارتاپ‌ها</h3>
                 <p class="service-desc">همراهی تخصصی از مرحله ایده تا رشد؛ شامل ثبت شرکت، قرارداد بین بنیان‌گذاران، جذب سرمایه و مسائل حقوقی روزمره.</p>
+                <button class="accordion-toggle-btn" onclick="toggleServiceDetails('s2', this)">
+                    <span>بیشتر بدانید</span><span class="arrow-icon">▼</span>
+                </button>
             </div>
+
             <div class="service-card">
                 <div class="service-icon-box">🛡️</div>
                 <h3 class="service-title">مدیریت ریسک حقوقی</h3>
                 <p class="service-desc">شناسایی نقاط خطر و پیشگیری از بحران‌های حقوقی و مالی قبل از وقوع؛ تا با خیال راحت روی رشد بیزنس تمرکز کنید.</p>
+                <button class="accordion-toggle-btn" onclick="toggleServiceDetails('s3', this)">
+                    <span>بیشتر بدانید</span><span class="arrow-icon">▼</span>
+                </button>
+            </div>
+
+            <div class="service-card">
+                <div class="service-icon-box">📝</div>
+                <h3 class="service-title">تصحیح قرارداد</h3>
+                <p class="service-desc">ارسال قراردادهای نگارش شده جهت بررسی و ارائه نظرات کارشناسی توسط متخصصین، رفع ایرادات و افزایش مهارت نگارش قرارداد.</p>
+                <button class="accordion-toggle-btn" onclick="toggleServiceDetails('s4', this)">
+                    <span>بیشتر بدانید</span><span class="arrow-icon">▼</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="common-details-box" id="serviceDetailsBox">
+            <div class="details-content" id="s1">
+                <div class="details-inner">
+                    <h4 class="details-section-title">جزئیات قراردادهای تجاری</h4>
+                    <p class="details-text">ما در تنظیم قراردادهای تجاری به تمامی جوانب حقوقی، مالی و اجرایی توجه می‌کنیم. قراردادها به گونه‌ای تنظیم می‌شوند که منافع شما را تضمین کرده و از بروز اختلافات در آینده جلوگیری کنند. این قراردادها شامل قراردادهای فروش، خرید، توزیع، نمایندگی و سرمایه‌گذاری می‌شود.</p>
+                </div>
+            </div>
+
+            <div class="details-content" id="s2">
+                <div class="details-inner">
+                    <h4 class="details-section-title">جزئیات مشاوره استارتاپ‌ها</h4>
+                    <p class="details-text">مشاوره استارتاپ‌ها شامل راهنمایی در انتخاب ساختار حقوقی مناسب (سهامی خاص، مسئولیت محدود و...)، تنظیم قراردادهای بنیان‌گذاران، جذب سرمایه‌گذار و همچنین بررسی مسائل حقوقی روزمره استارتاپ شماست.</p>
+                </div>
+            </div>
+
+            <div class="details-content" id="s3">
+                <div class="details-inner">
+                    <h4 class="details-section-title">جزئیات مدیریت ریسک حقوقی</h4>
+                    <p class="details-text">با بررسی دقیق قراردادها و فرآیندهای کسب‌وکار، نقاط آسیب‌پذیر را شناسایی کرده و راهکارهای حقوقی مناسب برای پیشگیری از بحران ارائه می‌دهیم. این کار باعث می‌شود هزینه‌های حقوقی آینده شما به شدت کاهش یابد.</p>
+                </div>
+            </div>
+
+            <div class="details-content" id="s4">
+                <div class="details-inner">
+                    <h4 class="details-section-title">📝 روند تصحیح قرارداد</h4>
+                    <p class="details-text">قراردادهای ارسالی مربوط به تکالیف آکادمی با توجه به صورت مساله و انتظاری که از یک کارشناس قرارداد می‌رود، تصحیح خواهد شد. در تصحیح، هم موارد شکلی و هم موارد ماهوی مدنظر قرار می‌گیرد و تذکرات لازم اعلام می‌گردد. تلاش می‌شود ایرادات به صورت اظهارنظر (Comment) اعلام گردد که موجب تمرین شما برای تصحیح موارد اعلام و اظهار شده گردد. قراردادهای ارسال شده در اولین فرصت و حداکثر ظرف مدت ۱۰ روز تصحیح و ارسال خواهند شد.</p>
+                    <h4 class="details-section-title" style="margin-top:20px;">📤 نحوه ارسال قرارداد</h4>
+                    <ul class="details-list">
+                        <li>بر روی فرم درخواست تصحیح قرارداد، کلیک بفرمایید.</li>
+                        <li>مشخصات خود و ایمیل مورد استفاده خود را وارد نموده و در توضیحات اعلام کنید که قرارداد مربوط به تکالیف آکادمی است یا متفرقه.</li>
+                        <li>یک فایل Word از قرارداد مورد نظر خودتان را بارگذاری نمایید.</li>
+                        <li>مبلغ مشخص شده را پرداخت نموده و سفارش خود را نهایی کنید.</li>
+                        <li>پس از نهایی‌سازی، ایمیل تایید سفارش را دریافت خواهید کرد.</li>
+                    </ul>
+                    <div style="text-align: center; margin-top: 20px;">
+                        <a href="#contact" class="btn-primary" style="display:inline-flex;">ثبت درخواست تصحیح قرارداد <span>←</span></a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
+    <!-- بخش درباره من (بازگشت به حالت اولیه) -->
     <section id="about" class="about-section">
         <div class="about-container">
             <div class="about-image-wrapper">
@@ -358,22 +404,22 @@
             <div class="process-card">
                 <div class="step-number">۱</div>
                 <h3 class="process-title">ثبت درخواست</h3>
-                <p class="process-desc">فرم تماس را پر کنید و موضوع درخواست خود (مشاوره یا قرارداد) را انتخاب کنید.</p>
+                <p class="process-desc">فرم تماس را پر کنید و موضوع درخواست خود را انتخاب کنید.</p>
             </div>
             <div class="process-card">
                 <div class="step-number">۲</div>
                 <h3 class="process-title">جلسه رایگان</h3>
-                <p class="process-desc">در کمتر از ۲۴ ساعت با شما تماس گرفته و یک جلسه ۱۵ دقیقه‌ای رایگان برگزار می‌شود.</p>
+                <p class="process-desc">در کمتر از ۲۴ ساعت تماس گرفته و جلسه ۱۵ دقیقه‌ای رایگان برگزار می‌شود.</p>
             </div>
             <div class="process-card">
                 <div class="step-number">۳</div>
                 <h3 class="process-title">تحلیل و راهکار</h3>
-                <p class="process-desc">نیازهای حقوقی شما بررسی شده و بهترین استراتژی و پیشنهاد قیمت ارائه می‌شود.</p>
+                <p class="process-desc">نیازهای حقوقی شما بررسی شده و بهترین استراتژی ارائه می‌شود.</p>
             </div>
             <div class="process-card">
                 <div class="step-number">۴</div>
                 <h3 class="process-title">شروع همکاری</h3>
-                <p class="process-desc">پس از تایید شما، قرارداد همکاری منعقد شده و کار بر روی پرونده شما آغاز می‌شود.</p>
+                <p class="process-desc">پس از تایید شما، قرارداد همکاری منعقد شده و کار آغاز می‌شود.</p>
             </div>
         </div>
     </section>
@@ -405,6 +451,7 @@
                             <option value="" disabled selected>یک گزینه را انتخاب کنید...</option>
                             <option value="consultation">مشاوره حقوقی</option>
                             <option value="contract">تنظیم و بازبینی قرارداد</option>
+                            <option value="review">تصحیح قرارداد</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -423,50 +470,6 @@
             <h2 class="section-title">آخرین مقالات و منابع</h2>
         </div>
         <div class="blog-grid" id="blogGrid"></div>
-    </section>
-
-    <!-- ================= اسلاید جدید: محاسبه‌گر ریسک حقوقی ================= -->
-    <section id="risk" class="risk-section">
-        <div class="risk-container">
-            <div class="section-subtitle">ارزیابی سریع</div>
-            <h2 class="risk-title">آیا کسب‌وکار شما در برابر ریسک‌های حقوقی ایمن است؟</h2>
-            <p class="risk-desc">به این ۳ سوال ساده پاسخ دهید تا وضعیت حقوقی کسب‌وکارتان را بسنجیم.</p>
-
-            <!-- سوال ۱ -->
-            <div class="risk-question">
-                <div class="risk-q-text">۱. آیا یک قرارداد رسمی بین بنیان‌گذاران (Founders Agreement) دارید؟</div>
-                <div class="risk-options">
-                    <button class="risk-btn" onclick="selectRisk(0, 'yes', this)">بله</button>
-                    <button class="risk-btn" onclick="selectRisk(0, 'no', this)">خیر</button>
-                </div>
-            </div>
-
-            <!-- سوال ۲ -->
-            <div class="risk-question">
-                <div class="risk-q-text">۲. آیا برای کارمندان خود قرارداد استخدامی استاندارد و محرمانگی (NDA) دارید؟</div>
-                <div class="risk-options">
-                    <button class="risk-btn" onclick="selectRisk(1, 'yes', this)">بله</button>
-                    <button class="risk-btn" onclick="selectRisk(1, 'no', this)">خیر</button>
-                </div>
-            </div>
-
-            <!-- سوال ۳ -->
-            <div class="risk-question">
-                <div class="risk-q-text">۳. آیا قراردادهای شما توسط یک وکیل متخصص بازبینی می‌شود؟</div>
-                <div class="risk-options">
-                    <button class="risk-btn" onclick="selectRisk(2, 'yes', this)">بله</button>
-                    <button class="risk-btn" onclick="selectRisk(2, 'no', this)">خیر</button>
-                </div>
-            </div>
-
-            <button class="analyze-btn" onclick="analyzeRisk()">تحلیل وضعیت حقوقی</button>
-
-            <div class="risk-result" id="riskResult">
-                <h3 id="resultTitle"></h3>
-                <p id="resultDesc"></p>
-                <a href="#contact" class="result-action-btn" id="resultBtn">رزرو مشاوره فوری ←</a>
-            </div>
-        </div>
     </section>
 
     <section class="final-section">
@@ -489,8 +492,54 @@
         </div>
     </section>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/split-type"></script>
+
     <script>
-        // اسکریپت فرم تماس
+        document.addEventListener("DOMContentLoaded", (event) => {
+            const heroTitle = document.getElementById('heroTitle');
+            if(heroTitle) {
+                const text = new SplitType(heroTitle, { types: 'words' });
+                gsap.from(text.words, {
+                    opacity: 0, y: 20, duration: 0.6, stagger: 0.05, ease: "power3.out", delay: 0.2
+                });
+            }
+
+            gsap.registerPlugin(ScrollTrigger);
+            const sections = document.querySelectorAll('.features-section, .about-section, .process-section, .contact-section, .blog-section');
+            sections.forEach(section => {
+                gsap.from(section, {
+                    opacity: 0, y: 50, duration: 0.8,
+                    scrollTrigger: { trigger: section, start: "top 85%", toggleActions: "play none none none" }
+                });
+            });
+        });
+
+        function toggleServiceDetails(contentId, btn) {
+            const detailsBox = document.getElementById('serviceDetailsBox');
+            const allContents = detailsBox.querySelectorAll('.details-content');
+            const targetContent = document.getElementById(contentId);
+            const allBtns = document.querySelectorAll('.services-grid .accordion-toggle-btn');
+
+            const isCurrentlyActive = targetContent.classList.contains('active');
+
+            allContents.forEach(c => c.classList.remove('active'));
+            allBtns.forEach(b => {
+                b.classList.remove('active');
+                b.querySelector('span:first-child').innerText = 'بیشتر بدانید';
+            });
+
+            if (!isCurrentlyActive) {
+                detailsBox.classList.add('active');
+                targetContent.classList.add('active');
+                btn.classList.add('active');
+                btn.querySelector('span:first-child').innerText = 'بستن توضیحات';
+            } else {
+                detailsBox.classList.remove('active');
+            }
+        }
+
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const name = document.getElementById('name').value;
@@ -500,15 +549,7 @@
             const today = new Date();
             const dateStr = today.toLocaleDateString('fa-IR');
 
-            const newRequest = {
-                id: Date.now(),
-                name: name,
-                contact: contactInfo,
-                category: category,
-                message: message,
-                date: dateStr,
-                status: 'new'
-            };
+            const newRequest = { id: Date.now(), name: name, contact: contactInfo, category: category, message: message, date: dateStr, status: 'new' };
 
             let requests = JSON.parse(localStorage.getItem('mm_requests')) || [];
             requests.push(newRequest);
@@ -518,46 +559,21 @@
             this.reset();
         });
 
-        // ================== اسکریپت بارگذاری داینامیک مقالات ==================
         let defaultArticles = [
-            {
-                id: 1,
-                image: "https://images.unsplash.com/photo-1450133064473-71024230f91e?q=80&w=600&auto=format&fit=crop",
-                category: "قراردادها",
-                title: "۵ نکته کلیدی قبل از امضای قرارداد سرمایه‌گذاری",
-                excerpt: "جذب سرمایه‌گذار یکی از مهم‌ترین مراحل رشد استارتاپ است. اما یک بند اشتباه می‌تواند کنترل شرکت را از شما بگیرد..."
-            },
-            {
-                id: 2,
-                image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=600&auto=format&fit=crop",
-                category: "ریسک حقوقی",
-                title: "چگونه از ریسک‌های حقوقی استارتاپ جلوگیری کنیم؟",
-                excerpt: "بسیاری از استارتاپ‌ها به دلیل عدم آگاهی از قوانین، درگیر پرونده‌های حقوقی پرهزینه می‌شوند. پیشگیری همیشه ارزان‌تر است..."
-            },
-            {
-                id: 3,
-                image: "https://images.unsplash.com/photo-1505664194779-8beaceb93744?q=80&w=600&auto=format&fit=crop",
-                category: "قوانین کار",
-                title: "راهنمای کامل قراردادهای استخدامی در استارتاپ‌ها",
-                excerpt: "استخدام اولین کارمندان، نیازمند قراردادهای شفاف است. با رعایت این اصول، از اختلافات آینده با تیم خود جلوگیری کنید..."
-            }
+            { id: 1, image: "https://images.unsplash.com/photo-1450133064473-71024230f91e?q=80&w=600&auto=format&fit=crop", category: "قراردادها", title: "۵ نکته کلیدی قبل از امضای قرارداد سرمایه‌گذاری", excerpt: "جذب سرمایه‌گذار یکی از مهم‌ترین مراحل رشد استارتاپ است. اما یک بند اشتباه می‌تواند کنترل شرکت را از شما بگیرد..." },
+            { id: 2, image: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=600&auto=format&fit=crop", category: "ریسک حقوقی", title: "چگونه از ریسک‌های حقوقی استارتاپ جلوگیری کنیم؟", excerpt: "بسیاری از استارتاپ‌ها به دلیل عدم آگاهی از قوانین، درگیر پرونده‌های حقوقی پرهزینه می‌شوند. پیشگیری همیشه ارزان‌تر است..." },
+            { id: 3, image: "https://images.unsplash.com/photo-1505664194779-8beaceb93744?q=80&w=600&auto=format&fit=crop", category: "قوانین کار", title: "راهنمای کامل قراردادهای استخدامی در استارتاپ‌ها", excerpt: "استخدام اولین کارمندان، نیازمند قراردادهای شفاف است. با رعایت این اصول، از اختلافات آینده با تیم خود جلوگیری کنید..." }
         ];
 
         function renderBlog() {
             const grid = document.getElementById('blogGrid');
             let articles = JSON.parse(localStorage.getItem('mm_articles'));
-
-            if (!articles || articles.length === 0) {
-                articles = defaultArticles;
-            }
-
+            if (!articles || articles.length === 0) { articles = defaultArticles; }
             grid.innerHTML = '';
-            
             if (articles.length === 0) {
                 grid.innerHTML = '<p style="text-align:center; width:100%; color:var(--text-muted);">هنوز مقاله‌ای منتشر نشده است.</p>';
                 return;
             }
-
             articles.reverse().forEach(art => { 
                 grid.innerHTML += `
                     <a href="#" class="blog-card">
@@ -574,74 +590,6 @@
         }
 
         document.addEventListener('DOMContentLoaded', renderBlog);
-
-        // ================== اسکریپت محاسبه‌گر ریسک حقوقی ==================
-        let riskAnswers = [null, null, null]; // آرایه‌ای برای ذخیره پاسخ‌ها
-
-        function selectRisk(index, value, btn) {
-            // ذخیره پاسخ
-            riskAnswers[index] = value;
-
-            // پاک کردن استایل قبلی از هر دو دکمه در آن سوال
-            const parent = btn.parentElement;
-            parent.querySelectorAll('.risk-btn').forEach(b => {
-                b.classList.remove('selected-yes', 'selected-no');
-            });
-
-            // اضافه کردن کلاس انتخاب شده به دکمه کلیک شده
-            if (value === 'yes') {
-                btn.classList.add('selected-yes');
-            } else {
-                btn.classList.add('selected-no');
-            }
-        }
-
-        function analyzeRisk() {
-            // بررسی اینکه آیا به همه سوالات پاسخ داده شده است
-            if (riskAnswers.includes(null)) {
-                alert('لطفاً به تمام سوالات پاسخ دهید.');
-                return;
-            }
-
-            const resultDiv = document.getElementById('riskResult');
-            const title = document.getElementById('resultTitle');
-            const desc = document.getElementById('resultDesc');
-            const btn = document.getElementById('resultBtn');
-
-            // شمارش تعداد پاسخ‌های "بله"
-            const yesCount = riskAnswers.filter(a => a === 'yes').length;
-
-            resultDiv.className = 'risk-result active'; // نمایش باکس نتیجه
-
-            if (yesCount === 3) {
-                // وضعیت عالی
-                resultDiv.classList.add('result-excellent');
-                title.innerText = 'وضعیت عالی! ✨';
-                desc.innerText = 'کسب‌وکار شما زیرساخت حقوقی بسیار قوی دارد. اما برای حفظ این امنیت، بازبینی دوره‌ای قراردادها را فراموش نکنید.';
-                btn.innerText = 'دریافت مشاوره دوره‌ای ←';
-                btn.href = '#contact';
-                btn.style.display = 'inline-block';
-            } else if (yesCount === 1 || yesCount === 2) {
-                // وضعیت هشدار
-                resultDiv.classList.add('result-warning');
-                title.innerText = 'هشدار! ⚠️';
-                desc.innerText = 'کسب‌وکار شما در معرض ریسک‌های حقوقی جدی قرار دارد. برخی از پایه‌های حقوقی شما ضعیف است و این می‌تواند در آینده گران تمام شود.';
-                btn.innerText = 'رزرو مشاوره تخصصی ←';
-                btn.href = '#contact';
-                btn.style.display = 'inline-block';
-            } else {
-                // وضعیت خطر
-                resultDiv.classList.add('result-danger');
-                title.innerText = 'خطر جدی! 🚨';
-                desc.innerText = 'کسب‌وکار شما بدون هیچ سپر حقوقی در حال حرکت است! یک اختلاف ساده می‌تواند تمام سرمایه و انرژی شما را نابود کند. همین حالا اقدام کنید.';
-                btn.innerText = 'مشاوره فوری و نجات کسب‌وکار ←';
-                btn.href = '#contact';
-                btn.style.display = 'inline-block';
-            }
-
-            // اسکرول به بخش نتیجه
-            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
     </script>
 </body>
 </html>
